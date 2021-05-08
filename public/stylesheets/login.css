@@ -37,10 +37,21 @@ span i {
     margin-right: 8px;
 }
 
+hr {
+    border-style: solid;
+    border-radius: 1px;
+    border-color: #dfe1e6;
+}
+
+button:focus {
+    outline: none;
+}
+
 .login-header {
     color: rgb(94, 108, 132);
     margin-top: -30px;
     margin-bottom: 30px;
+    text-align: left;
 }
 
 .login-block {
@@ -84,6 +95,21 @@ input[type=text]:focus, input[type=password]:focus {
     height: 15px;
 }
 
+.form-input-half {
+    padding: 15px;
+    margin-bottom: 15px;
+    width: 135px;
+    height: 15px;
+}
+
+.form-input-left {
+    float: left;
+}
+
+.form-input-right {
+    float: right;
+}
+
 .form-submit {
     color: white;
     font-size: 14px;
@@ -95,6 +121,10 @@ input[type=text]:focus, input[type=password]:focus {
     border-radius: 3px;
     border-style: solid;
     transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.form-register {
+    margin-bottom: 10px;
 }
 
 .form-submit:hover {

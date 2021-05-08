@@ -2,7 +2,7 @@
 <html lang="en">
 
     <head>
-        <title>Login - COVIDTrace</title>
+        <title>Register - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="stylesheets/login.css">
         <link rel="stylesheet" href="fontawesome/css/all.css">
@@ -16,31 +16,29 @@
         <section class="login-page">
             <div class="login-block">
                 <div class="login-header">
-                    <h3>Sign in</h3>
-                    <p>Continue to your COVIDTrace dashboard</p>
+                    <h3>Register</h3>
+                    <p>Create your COVIDTrace account</p>
                 </div>
 
                 <div class="login-input">
                     <form class="login-form" method="POST">
                         <div>
-                            <input class="form-input" type="text" id="username" name="username" placeholder="Enter username" />
+                            <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" />
+                            <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" />
                         </div>
                         <div>
-                            <input class="form-input" type="password" id="password" name="password" placeholder="Enter password" />
+                            <input class="form-input" type="text" id="username" name="username" placeholder="Username" />
                         </div>
                         <div>
-                            <button class="form-submit" type="submit" value="login"><span>Sign in</span></button>
+                            <input class="form-input" type="password" id="password" name="password" placeholder="Password" />
+                        </div>
+                        <div>
+                            <input class="form-input" type="password" id="password" name="confirmpassword" placeholder="Confirm Password" />
+                        </div>
+                        <div>
+                            <button class="form-submit form-register" type="submit"><span>Register</span></button>
                         </div>
                     </form>
-                </div>
-                <p class="or">OR</p>
-                <div class="login-social">
-                    <div>
-                        <button class="oauth-submit" type="button"><span><i class="fab fa-google"></i><b>Continue with Google</b></span></button>
-                    </div>
-                    <div>
-                        <button class="oauth-submit" type="button"><span><i class="fab fa-facebook-f"></i><b>Continue with Facebook</b></span></button>
-                    </div>
                 </div>
 
                 <div class="login-input">
@@ -51,7 +49,7 @@
                         </li>
                         <li>&bull;</li>
                         <li>
-                            <a href="/register"><span>Don't have an account?</span></a>
+                            <a href="/login"><span>Already have an account?</span></a>
                         </li>
                     </ul>
                 </div>
