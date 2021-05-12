@@ -97,3 +97,46 @@ article {
     margin-right:auto;
     margin-left:auto;
 }
+
+.center {
+    text-align:center;
+}
+
+footer {
+    color:white;
+    background-color:grey;
+    padding-top:1.1em;
+    padding-bottom:1.1em;
+    max-width:70rem;
+    margin-right:auto;
+    margin-left:auto;
+}
+
+.footer-left{
+    padding-left:1.1em;
+
+}
+
+.fill-page {
+    height:100%;
+}
+
+.indented p {
+    padding-left:3em;
+}
+
+
+.table-holder {
+    height:300px;
+    width:400px;
+    position:absolute;
+    left:600px;
+    bottom:260px;
+    background-color:darkgrey;
+
+}
+
+.table-holder p {
+    color:white;
+    text-align:center;
+}

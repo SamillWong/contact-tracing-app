@@ -2,7 +2,7 @@
 <html lang="en">
 
     <head>
-        <title>major project landing page</title>
+        <title>CovidTRACE - Venue Management</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif">
@@ -11,35 +11,53 @@
     <body>
 
         <header>
-            <a>Home</a>
+            <a href="/">Home</a>
 
-            <a class="header-right">Log-In/ Sign-up</a>
-
-            <a class="header-right">Check-in</a>
-            <a class="header-right">View Hotspots</a>
-            <a class="header-right">Manage Venue</a>
-            <a class="header-right-hidden">Health Official things</a>
-
+            <a href="/register" class="header-right">Register</a>
+            <a href="/login" class="header-right">Login</a>
+            <a href="/dashboard/check-in" class="header-right">Check-in</a>
+            <a href="/hotspots" class="header-right">View Hotspots</a>
+            <a href="/venue" class="header-right">Manage Venue</a>
+            <a href="#" class="header-right-hidden">Health Official things</a>
 
         </header>
 
         <div class="title-logo-div">
             <div class="logo-holder"><p>LOGO</p></div>
-            <h1 class="title">Title</h1>
+            <h1 class="title">Venue Management</h1>
         </div>
 
         <div class="link-tree">
             <a>>Home</a>
-            <a>>Article 1</a>
+            <a>>Venue Management</a>
         </div>
 
 
 
-        <article>
-            <p>The main article would go here :) (indented a bit probably)</p>
+        <article class="indented">
+            <p class="center">Use this webpage to view and edit different information about your venue.</p><br><br>
 
+            <p>Venue Address: <input type="button" value="Edit"></p><p>123 Fake Street</p>
+            <p>Venue Name: <input type="button" value="Edit"></p><p>Hotdog Stand</p>
+            <p>Venue Owner: <input type="button" value="Edit"></p><p>John Smith</p>
+
+            <div class="table-holder"><p>CHECK IN HISTORY TABLE GOES HERE</p></div>
+
+            <input type="button" value="Click to View Venue Check-in History"></p>
 
         </article>
+
+        <footer>
+            <div class="footer-left-div">
+                <p class="footer-left">Emergency Contacts: 123456789<br>Example 2:129848372<br>Example 3: 39274795</p>
+                <p class="footer-left">Privacy Policy & Terms of Use & Copyright Information</p>
+            </div>
+
+
+
+        </footer>
+
+
 
     </body>
 
