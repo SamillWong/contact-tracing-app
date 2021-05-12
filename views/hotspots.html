@@ -2,10 +2,10 @@
 <html lang="en">
 
     <head>
-        <title>Check-in - COVIDTrace</title>
+        <title>Current Hotspots - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
-        <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
     </head>
 
     <body>
@@ -30,18 +30,19 @@
                             <a href="/">Home</a>
                             <span class="breadcrumb-divider">/</span>
                         </li>
-                        <li>Check-in</li>
+                        <li>Current Hotspots</li>
                     </ul>
                 </div>
 
                 <div class="title-div">
-                    <h2>Check-in</h2>
-                    <p>Enter the unique COVIDTrace code present at the venue below to check-in</p>
+                    <h2>Current Hotspots</h2>
+                    <p>View current coronavirus hotspots on a map</p>
                 </div>
 
-                <div class="container-element">
-                    <p>Enter code: <input type="text"></p>
-                </div>
+                <iframe width="1280" height="450" class="container-element"
+                style="border:0" loading="lazy" allowfullscreen
+                src="https://www.google.com/maps/embed/v1/place?key=API_KEY&q=Adelaide+SA">
+                </iframe>
 
             </div>
 
