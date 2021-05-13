@@ -166,11 +166,31 @@ body {
     border-bottom: 1px solid #dddddd;
 }
 
-.venue-edit-button {
+.venue-button {
+    color: white;
+    font-size: 14px;
+    background-color: #0052cc;
+    cursor: default;
+    text-decoration: none;
+    padding: 0px 4px;
+    border-color: #0052cc;
+    border-radius: 1px;
+    border-style: solid;
     float: right;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.venue-history-div {
+.venue-button:hover {
+    background-color: #0065ff;
+    cursor: pointer;
+    border-color: #0065ff;
+}
+
+.venue-button:focus {
+    margin: none;
+}
+
+.venue-table-div {
     margin-top: 20px;
     margin-left: 320px;
     margin-right: 320px;
@@ -180,6 +200,7 @@ body {
 
 .venue-table {
     width: 100%;
+    border: none;
 }
 
 .venue-table tr:nth-child(odd) {
@@ -302,6 +323,10 @@ body {
     float: right;
 }
 
+.form-register {
+    margin-bottom: 10px;
+}
+
 .form-submit {
     color: white;
     font-size: 14px;
@@ -313,10 +338,6 @@ body {
     border-radius: 3px;
     border-style: solid;
     transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.form-register {
-    margin-bottom: 10px;
 }
 
 .form-submit:hover {
