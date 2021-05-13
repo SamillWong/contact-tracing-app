@@ -6,6 +6,7 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <link rel="stylesheet" text="text/css" href="fontawesome/css/all.css">
     </head>
 
     <body>
@@ -18,10 +19,12 @@
                     <a href="/"><b>COVIDTrace</b></a>
                     <a href="/register" class="header-right">Register</a>
                     <a href="/login" class="header-right">Login</a>
+                    <a href="/dashboard/profile" class="header-right">Profile</a>
                     <a href="/dashboard/check-in">Check-in</a>
+                    <a href="/dashboard/alerts">View Alerts</a>
                     <a href="/hotspots">View Hotspots</a>
                     <a href="/venue">Manage Venue</a>
-                    <a href="/doh-dashboard" class="header-right-hidden">Health Official Portal</a>
+                    <a href="/admin" class="header-right-hidden">Health Official Portal</a>
                 </header>
 
                 <div class="breadcrumb-div">
@@ -61,18 +64,24 @@
                     </table>
                 </div>
 
-                <div class="venue-info-div">
+                <div class="info-div">
                     <p>
                         <b>Venue Name: </b>Woodville Pizza Bar
-                        <input class="venue-button" type="button" value="Edit">
+                        <button class="edit-button" type="button">
+                            <i class="fas fa-edit"></i>
+                        </button>
                     </p>
                     <p>
                         <b>Venue Address: </b>1/58 Woodville Rd, WOODVILLE SOUTH SA 5011
-                        <input class="venue-button" type="button" value="Edit">
+                        <button class="edit-button" type="button">
+                            <i class="fas fa-edit"></i>
+                        </button>
                     </p>
                     <p>
                         <b>Venue Owner: </b>John Smith
-                        <input class="venue-button" type="button" value="Edit">
+                        <button class="edit-button" type="button">
+                            <i class="fas fa-edit"></i>
+                        </button>
                     </p>
                 </div>
 

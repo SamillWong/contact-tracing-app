@@ -193,16 +193,55 @@ body {
     margin: 24px 320px;
 }
 
+.info-div {
+    margin: 0px 320px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.edit-button {
+    color: black;
+    font-size: 14px;
+    background-color: transparent;
+    cursor: default;
+    text-decoration: none;
+    border: none;
+    padding: 0px 4px;
+    float: right;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.edit-button:hover {
+    color: #0065ff;
+    cursor: pointer;
+}
+
 .center {
     text-align: center;
 }
 
-/* VENUE ELEMENTS */
+/* ALERT ELEMENTS */
 
-.venue-info-div {
-    margin: 0px 320px;
-    border-bottom: 1px solid #dddddd;
+.alert-div {
+    margin-top: 20px;
+    margin-left: 320px;
+    margin-right: 320px;
+    font-size: 18px;
+    line-height: 36px;
+    padding: 0px 15px;
+    background-color: #f9f9f9;
+    border-left: 5px solid #e41414;
+    display: flex;
 }
+
+.alert-triangle-div {
+    color: #e41414;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    padding-left: 10px;
+    padding-right: 18px;
+}
+
+/* VENUE ELEMENTS */
 
 .venue-button {
     color: white;
