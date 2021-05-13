@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300');
 
+/*
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+*/
+
 /* DOCUMENT STRUCTURE */
 
 #page-container {
@@ -19,6 +31,12 @@ body {
 
 #login-body {
     background-color: whitesmoke;
+}
+
+/* FLEX CONTAINER */
+
+.flex-container {
+    display: flex;
 }
 
 /* STANDARD HEADER */
@@ -86,20 +104,40 @@ body {
     z-index: -1;
 }
 
-.title-index-div {
-    margin-top: 35vh;
+.index-title-div {
+    margin-top: 28vh;
+    margin-bottom: 28vh;
     margin-left: 180px;
     margin-right: 180px;
+    flex: 2 1 auto;
 }
 
-.title-index {
+.index-form-div {
+    margin-top: 16vh;
+    margin-bottom: 16vh;
+    margin-left: 0px;
+    margin-right: 200px;
+    flex: 1 1 auto;
+}
+
+.index-login-block {
+    margin: auto;
+    background-color: white;
+    display: block;
+    width: 350px;
+    text-align: center;
+    padding: 80px 40px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 0px 10px;
+}
+
+.index-title {
     color: white;
     font-size: 50px;
     text-shadow: rgb(0 0 0 / 60%) 1px 1px 10px;
     text-align: left;
 }
 
-.subtitle-index {
+.index-subtitle {
     color: white;
     font-size: 30px;
     text-shadow: rgb(0 0 0 / 60%) 1px 1px 10px;
