@@ -152,22 +152,7 @@ body {
 }
 
 .container-element {
-    margin: 0px 320px;
-}
-
-.logo-holder {
-    height:150px;
-    width:150px;
-    position:absolute;
-    left:10px;
-    bottom:10px;
-    background-color:black;
-
-}
-
-.logo-holder p {
-    color:white;
-    text-align:center;
+    margin: 24px 320px;
 }
 
 .center {
