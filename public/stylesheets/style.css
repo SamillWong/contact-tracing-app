@@ -13,6 +13,12 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-style: normal;
+    background-color: white;
+}
+
+#login-body {
+    background-color: whitesmoke;
 }
 
 /* STANDARD HEADER */
@@ -203,6 +209,156 @@ body {
 .venue-table tr td {
     text-align: left;
     padding: 8px;
+}
+
+/* LOGIN ELEMENTS */
+
+.login-page {
+    background-color: whitesmoke;
+}
+
+.login-input ul {
+    padding-top: 5px;
+    padding-left: 0px;
+}
+
+.login-input ul li {
+    display: inline;
+    list-style: none;
+}
+
+.login-input a {
+    color: #0052cc;
+    font-size: 14px;
+}
+
+.login-input a:link {
+    text-decoration: none;
+}
+
+.login-input a:hover {
+    text-decoration: underline;
+}
+
+.login-social span i {
+    margin-right: 8px;
+}
+
+.login-input hr {
+    border-style: solid;
+    border-radius: 1px;
+    border-color: #dfe1e6;
+}
+
+.login-form button:focus {
+    outline: none;
+}
+
+.login-header {
+    color: rgb(94, 108, 132);
+    margin-top: -30px;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.login-block {
+    margin: auto;
+    background-color: white;
+    display: block;
+    width: 350px;
+    margin-top: 10%;
+    text-align: center;
+    padding: 45px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 0px 10px;
+}
+
+.login-form input[type=text], input[type=password] {
+    background-color: white;
+    border-style: solid;
+    border-color: #dfe1e6;
+    border-radius: 3px;
+    outline: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.login-form input[type=text]:hover, input[type=password]:hover {
+    background-color: whitesmoke;
+}
+
+.login-form input[type=text]:focus, input[type=password]:focus {
+    background-color: white;
+    border-color: #4c9aff;
+}
+
+.or {
+    color: rgb(94, 108, 132);
+    font-size: 12px;
+}
+
+.form-input {
+    padding: 15px;
+    margin-bottom: 15px;
+    width: 315px;
+    height: 15px;
+}
+
+.form-input-half {
+    padding: 15px;
+    margin-bottom: 15px;
+    width: 135px;
+    height: 15px;
+}
+
+.form-input-left {
+    float: left;
+}
+
+.form-input-right {
+    float: right;
+}
+
+.form-submit {
+    color: white;
+    font-size: 14px;
+    background-color: #0052cc;
+    width: 350px;
+    height: 45px;
+    cursor: default;
+    border-color: #0052cc;
+    border-radius: 3px;
+    border-style: solid;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.form-register {
+    margin-bottom: 10px;
+}
+
+.form-submit:hover {
+    background-color: #0065ff;
+    cursor: pointer;
+    border-color: #0065ff;
+}
+
+.oauth-submit {
+    color: rgb(66, 82, 105);
+    font-size: 14px;
+    background-color: white;
+    margin-bottom: 15px;
+    width: 350px;
+    height: 45px;
+    cursor: default;
+    border-color: white;
+    border-radius: 3px;
+    border-style: solid;
+    box-shadow: rgb(0 0 0 / 20%) 1px 1px 5px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.oauth-submit:hover {
+    background-color: whitesmoke;
+    cursor: pointer;
+    border-color: whitesmoke;
 }
 
 /* FOOTER */
