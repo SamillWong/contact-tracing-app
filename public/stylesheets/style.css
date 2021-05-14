@@ -263,10 +263,6 @@ body {
     border-color: #0065ff;
 }
 
-.venue-button:focus {
-    margin: none;
-}
-
 .venue-table-div {
     margin-top: 20px;
     margin-left: 320px;
