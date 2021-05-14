@@ -15,7 +15,6 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', function(req, res) {
-  console.log(req.body);
   // TODO: Add input validation and implement server-side
   return res.send("Success");
 });
@@ -29,7 +28,6 @@ router.get('/register', function(req, res) {
 });
 
 router.post('/register', function(req, res) {
-  console.log(req.body);
   // TODO: Add input validation and implement server-side
   return res.send("Success");
 });
@@ -59,7 +57,6 @@ router.get('/dashboard/check-in', function(req, res) {
 });
 
 router.post('/dashboard/check-in', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -89,7 +86,6 @@ router.get('/dashboard/profile', function(req, res) {
 });
 
 router.post('/dashboard/profile', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -103,7 +99,6 @@ router.get('/venue', function(req, res) {
 });
 
 router.post('/venue', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -125,7 +120,6 @@ router.get('/admin-login', function(req, res) {
 });
 
 router.post('/admin-login', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -147,7 +141,6 @@ router.get('/admin/register', function(req, res) {
 });
 
 router.post('/admin/register', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -161,7 +154,6 @@ router.get('/admin/profile', function(req, res) {
 });
 
 router.post('/admin/profile', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -175,7 +167,6 @@ router.get('/admin/hotspots', function(req, res) {
 });
 
 router.post('/admin/hotspots', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -189,7 +180,6 @@ router.get('/admin/users', function(req, res) {
 });
 
 router.post('/admin/users', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
@@ -203,7 +193,6 @@ router.get('/admin/venues', function(req, res) {
 });
 
 router.post('/admin/venues', function(req, res) {
-  console.log(req.body);
   // TODO: Implement server-side
   return res.send("Success");
 });
