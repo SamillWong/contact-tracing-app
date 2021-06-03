@@ -6,6 +6,9 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="stylesheets/style.css">
         <link rel="stylesheet" href="fontawesome/css/all.css">
+        <script src="javascripts/login.js" defer></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <meta name="google-signin-client_id" content="1064925142905-hd2taue727i7qv0b858gltpde696poeu.apps.googleusercontent.com">
     </head>
 
     <body id="login-body">
@@ -36,6 +39,16 @@
                     <div>
                         <button class="oauth-submit" type="button"><span><i class="fab fa-google"></i><b>Continue with Google</b></span></button>
                     </div>
+
+
+                    <!-- GOOGLE LOG IN STUFF--->
+
+                    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                    <a href="#" onclick="signOut();">Sign out</a>
+
+
+
+
                     <div>
                         <button class="oauth-submit" type="button"><span><i class="fab fa-facebook-f"></i><b>Continue with Facebook</b></span></button>
                     </div>
@@ -53,7 +66,7 @@
                         </li>
                     </ul>
                 </div>
-                
+
             </div>
         </div>
 
