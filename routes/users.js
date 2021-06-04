@@ -154,20 +154,18 @@ router.post('/register', function(req, res, next) {
 
             } else { //this account already exists, cannot register again. If email and password are in system, sign them in.
                 connection.release();
-                console.log("email already exists in system");
-                console.log(rows);
                 //verify password here!!
-                console.log(rows[0].Password);
-                console.log(plaintextpw);
 
                 var tf=bcrypt.compareSync(plaintextpw, rows[0].Password);
                     if (tf==true){
-                        console.log("true");
+                        //console.log("true");
                         req.session.verified=true;
                         req.session.userid=rows[0].UserID
+                        res.redirect('/');
 
                     } else {
-                        console.log("false");
+                        //console.log("false");
+                        res.redirect("/register");
                     }
 
 
@@ -177,7 +175,6 @@ router.post('/register', function(req, res, next) {
         });
     });
 
-    res.redirect('/');
 
 });
 
