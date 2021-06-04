@@ -105,7 +105,8 @@ var bcrypt = require('bcryptjs');
 
 
 router.post('/register', function(req, res, next) {
-     // TODO: Add input validation and implement server-side
+
+    //object to store user values;
     const newUser = {
           fname: req.body.fname,
           lname: req.body.lname,
@@ -113,53 +114,71 @@ router.post('/register', function(req, res, next) {
           password: req.body.password,
         }
 
+    var plaintextpw=newUser.password;
 
 
+    //overwrite sent password with new hashed/salted password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newUser.password, salt);
-
     newUser.password= hash;
 
-    console.log(newUser.password);
+    //console.log(newUser.password);
 
-
+    //check if email exists in database. If not, create new entry and allow user to log in.
     req.pool.getConnection(function(err, connection){
         if (err){
             res.sendStatus(500);
             return;
         }
 
+
         var query1 = "SELECT * FROM UserProfile WHERE Email = ?;";
         connection.query(query1, [newUser.email], function(err,rows,fields){
-            console.log(rows); //check content of query
+            //console.log(rows); //check content of query
 
-            if (err) { // if error no verify
+            if (err) {
                 return;
             }
 
-            if (rows.length==0){ // if rows empty ie nothing returned, email is not attached to an account therefore create one
-                console.log("valid email"); // to be removed
+            // if row.length=0 there are no entries therefore that unique email is not attached to any account and we can make one.
+            if (rows.length==0){
+                //console.log("valid email"); // to be removed
                 var insertquery = "INSERT INTO UserProfile (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
                 connection.query(insertquery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields){
                     connection.release();
-                    if (err) { // if error no verify
+                    if (err) {
                         return;
                     }
-
+                    res.redirect('/');
                 });
 
-            } else { //this account already exists, cannot register again
-                console.log("email already exists in system"); //if the email already exist and password right then we can just log them in here.
-                req.session.verified=true;
-                req.session.userid=rows[0].UserID
+            } else { //this account already exists, cannot register again. If email and password are in system, sign them in.
+                connection.release();
+                console.log("email already exists in system");
+                console.log(rows);
+                //verify password here!!
+                console.log(rows[0].Password);
+                console.log(plaintextpw);
+
+                var tf=bcrypt.compareSync(plaintextpw, rows[0].Password);
+                    if (tf==true){
+                        console.log("true");
+                        req.session.verified=true;
+                        req.session.userid=rows[0].UserID
+
+                    } else {
+                        console.log("false");
+                    }
+
+
 
 
             }
         });
     });
-    
-    
+
     res.redirect('/');
+
 });
 
 
