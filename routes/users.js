@@ -1,8 +1,20 @@
 var express = require('express');
 var router = express.Router();
 
-const CLIENT_ID = '1064925142905-hd2taue727i7qv0b858gltpde696poeu.apps.googleusercontent.com';
+var bodyParser = require('body-parser');
+var app = express();
+var expressValidator = require('express-validator');
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(expressValidator());
+
+
+var LocalStrategy   = require('passport-local').Strategy;
+
+
+
+//google stuff
+const CLIENT_ID = '1064925142905-hd2taue727i7qv0b858gltpde696poeu.apps.googleusercontent.com';
 const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -55,7 +67,7 @@ router.post('/login/verifyDB', function(req,res,next){
             return;
         }
 
-        var query1 = "SELECT * FROM UserProfile WHERE username = ?;";
+        var query1 = "SELECT * FROM UserProfile WHERE Email = ?;";
         connection.query(query1, [req.body.user], function(err,rows,fields){
             connection.release();
             //console.log(rows); //check content of query
@@ -81,6 +93,85 @@ router.post('/login/verifyDB', function(req,res,next){
         });
     });
 });
+
+
+//register account
+
+
+
+
+
+var bcrypt = require('bcryptjs');
+
+
+router.post('/register', function(req, res, next) {
+     // TODO: Add input validation and implement server-side
+    const newUser = {
+          fname: req.body.fname,
+          lname: req.body.lname,
+          email: req.body.email,
+          password: req.body.password,
+        }
+
+
+
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(newUser.password, salt);
+
+    newUser.password= hash;
+
+    console.log(newUser.password);
+
+
+    req.pool.getConnection(function(err, connection){
+        if (err){
+            res.sendStatus(500);
+            return;
+        }
+
+        var query1 = "SELECT * FROM UserProfile WHERE Email = ?;";
+        connection.query(query1, [newUser.email], function(err,rows,fields){
+            console.log(rows); //check content of query
+
+            if (err) { // if error no verify
+                return;
+            }
+
+            if (rows.length==0){ // if rows empty ie nothing returned, email is not attached to an account therefore create one
+                console.log("valid email"); // to be removed
+                var insertquery = "INSERT INTO UserProfile (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+                connection.query(insertquery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields){
+                    connection.release();
+                    if (err) { // if error no verify
+                        return;
+                    }
+
+                });
+
+            } else { //this account already exists, cannot register again
+                console.log("email already exists in system"); //if the email already exist and password right then we can just log them in here.
+                req.session.verified=true;
+                req.session.userid=rows[0].UserID
+
+
+            }
+        });
+    });
+    
+    
+    res.redirect('/');
+});
+
+
+
+
+
+
+
+
+
+
+
 
 
 

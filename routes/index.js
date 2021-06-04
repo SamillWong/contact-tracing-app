@@ -1,13 +1,14 @@
 var express = require('express');
 var router  = express.Router();
+var bcrypt = require('bcryptjs');
 
 /* GET home page */
 router.get('/', function(req, res) {
   return res.sendFile('index.html', { root: 'views' });
 });
 
-/* 
- * GET/POST login page 
+/*
+ * GET/POST login page
  * Users should be able to log in to their account.
  */
 router.get('/login', function(req, res) {
@@ -27,10 +28,7 @@ router.get('/register', function(req, res) {
   return res.sendFile('register.html', { root: 'views' });
 });
 
-router.post('/register', function(req, res) {
-  // TODO: Add input validation and implement server-side
-  return res.send("Success");
-});
+
 
 /*
  * GET hotspots page
@@ -41,7 +39,7 @@ router.get('/hotspots', function(req, res) {
 });
 
 /*
- * GET dashboard page 
+ * GET dashboard page
  * Logged-in users should be able to view all accessible routes.
  */
 router.get('/dashboard', function(req, res) {
@@ -49,7 +47,7 @@ router.get('/dashboard', function(req, res) {
 });
 
 /*
- * GET/POST check-in page 
+ * GET/POST check-in page
  * Logged-in users should be able to check-in by enter a code or scanning a QR code.
  */
 router.get('/dashboard/check-in', function(req, res) {
@@ -61,8 +59,8 @@ router.post('/dashboard/check-in', function(req, res) {
   return res.send("Success");
 });
 
-/* 
- * GET check-in history page 
+/*
+ * GET check-in history page
  * Logged-in users should be able to see their check-in history on a map.
  */
 router.get('/dashboard/check-in-history', function(req, res) {
@@ -70,7 +68,7 @@ router.get('/dashboard/check-in-history', function(req, res) {
 });
 
 /*
- * GET alerts page 
+ * GET alerts page
  * Logged-in users should be able to see if they have been to a hotspot.
  */
 router.get('/dashboard/alerts', function(req, res) {
@@ -78,7 +76,7 @@ router.get('/dashboard/alerts', function(req, res) {
 });
 
 /*
- * GET/POST profile page 
+ * GET/POST profile page
  * Logged-in users should be able to view and edit their user information.
  */
 router.get('/dashboard/profile', function(req, res) {
@@ -91,7 +89,7 @@ router.post('/dashboard/profile', function(req, res) {
 });
 
 /*
- * GET/POST venue page 
+ * GET/POST venue page
  * Managers should be able to view and edit their venue information.
  */
 router.get('/venue', function(req, res) {
@@ -146,7 +144,7 @@ router.post('/admin/register', function(req, res) {
 });
 
 /*
- * GET/POST admin profile page 
+ * GET/POST admin profile page
  * Logged-in admins should be able to view and edit their user information.
  */
 router.get('/admin/profile', function(req, res) {

@@ -79,6 +79,12 @@ function onSignIn(googleUser) {
 
 }
 
-function Register(){
 
+function matching(input) {
+        if (input.value != document.getElementById('password').value) {
+            input.setCustomValidity('Passwords must be the same');
+        } else {
+            // input is valid -- reset the error message
+            input.setCustomValidity('');
+        }
 }
