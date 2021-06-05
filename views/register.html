@@ -21,11 +21,10 @@
 
 
 
-                <div id="register">
 
 
                     <div class="login-input">
-                        <form class="login-form" method="POST" action='/users/register' > <!-- add to left tag: method="POST" --->
+                        <form class="login-form" method="POST" action='/users/register' >
                             <div>
                                 <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" required/>
                                 <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" required/>
@@ -39,6 +38,11 @@
                             <div>
                                 <input class="form-input" type="password" id="confirmpassword" name="confirmpassword"  placeholder="Confirm Password" oninput=matching(this) required/>
                             </div>
+
+                            <div>
+                                <input class="registerradio" type="radio" id="userbutton" name="type" value="user" required> This is a normal user account.</input><br> <!-- normal user is not a really clear term--->
+                                <input class="registerradio" type="radio" id="managerbutton" name="type"value="manager" required> This is a venue management account.</input>
+                            </div>
                             <div>
                                 <button class="form-submit form-register" type="submit" ><span>Register</span></button>
                             </div>
@@ -46,7 +50,7 @@
                     </div>
 
 
-                </div>
+
 
 
 

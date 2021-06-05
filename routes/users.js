@@ -8,8 +8,9 @@ var expressValidator = require('express-validator');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 
+var bcrypt = require('bcryptjs');
 
-var LocalStrategy   = require('passport-local').Strategy;
+
 
 
 
@@ -85,8 +86,8 @@ router.post('/login/verifyDB', function(req,res,next){
                 req.session.verified=true;
                 req.session.userid=rows[0].UserID
 
-                console.log(req.session.userid);
-                console.log(req.session.verified);
+                //console.log(req.session.userid);
+                //console.log(req.session.verified);
                 res.sendStatus(200);
 
             }
@@ -96,33 +97,24 @@ router.post('/login/verifyDB', function(req,res,next){
 
 
 //register account
-
-
-
-
-
-var bcrypt = require('bcryptjs');
-
-
 router.post('/register', function(req, res, next) {
 
     //object to store user values;
     const newUser = {
           fname: req.body.fname,
           lname: req.body.lname,
-          email: req.body.email,
+          email: req.body.email, //make email non caps sensitive maybe theres a function idk
           password: req.body.password,
+          type:req.body.type,
         }
 
-    var plaintextpw=newUser.password;
-
+    var plaintextpw=newUser.password; // for use comparing later if needed. NOT STORED;
 
     //overwrite sent password with new hashed/salted password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newUser.password, salt);
     newUser.password= hash;
 
-    //console.log(newUser.password);
 
     //check if email exists in database. If not, create new entry and allow user to log in.
     req.pool.getConnection(function(err, connection){
@@ -131,64 +123,173 @@ router.post('/register', function(req, res, next) {
             return;
         }
 
+        if (newUser.type=="user"){
+            //console.log("user selected");
+            var query1 = "SELECT * FROM UserProfile WHERE Email = ?;";
+            connection.query(query1, [newUser.email], function(err,rows,fields){
+                //console.log(rows); //check content of query
+                if (err) {
+                    return;
+                }
 
-        var query1 = "SELECT * FROM UserProfile WHERE Email = ?;";
-        connection.query(query1, [newUser.email], function(err,rows,fields){
+                // if row.length=0 there are no entries therefore that unique email is not attached to any account and we can make one.
+                if (rows.length==0){
+                    var insertquery = "INSERT INTO UserProfile (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+                    connection.query(insertquery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields){
+                        connection.release();
+                        if (err) {
+                            return;
+                        }
+                        res.redirect('/');
+                    });
+
+                } else { //this account already exists, cannot register again. If email and password are correct and in system, sign them in.
+                    connection.release();
+
+                    //verify password here
+                    var tf=bcrypt.compareSync(plaintextpw, rows[0].Password);
+                    if (tf==true){
+                        req.session.verified=true;
+                        req.session.userid=rows[0].UserID;
+                        res.redirect('/');
+
+                    } else {
+                        //if password wrong but email correct direct them to /login?
+                        res.redirect("/login");
+                    }
+                }
+            });
+        } else if (newUser.type=="manager"){ //if manager radio button selected, create manager account
+            //console.log("manager selected");
+            var query1 = "SELECT * FROM VenueManager WHERE Email = ?;";
+            connection.query(query1, [newUser.email], function(err,rows,fields){
+                //console.log(rows); //check content of query
+                if (err) {
+                    return;
+                }
+
+                // if row.length=0 there are no entries therefore that unique email is not attached to any account and we can make one.
+                if (rows.length==0){
+                    var insertquery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+                    connection.query(insertquery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields){
+                        connection.release();
+                        if (err) {
+                            return;
+                        }
+                        res.redirect('/');
+                    });
+
+                } else { //this account already exists, cannot register again. If email and password are correct and in system, sign them in.
+                    connection.release();
+
+                    //verify password here
+                    var tf=bcrypt.compareSync(plaintextpw, rows[0].Password);
+                    if (tf==true){
+                        req.session.verified=true;
+                        req.session.managerid=rows[0].ManagerID;
+                        res.redirect('/');
+
+                    } else {
+                        //if password wrong but email correct direct them to /login?
+                        res.redirect("/login");
+                    }
+                }
+            });
+        }
+    });
+});
+
+//regular login functionality
+router.post('/regular-login', function(req, res, next) {
+    // TODO: Add input validation and implement server-side
+
+    var returningUser={
+        email: req.body.email, //need to make all this non caps sensitive
+        password: req.body.password,
+    }
+
+
+    req.pool.getConnection(function(err, connection){
+        if (err){
+            res.sendStatus(500);
+            return;
+        }
+
+        var usersquery="SELECT * FROM UserProfile WHERE Email = ?;";
+        connection.query(usersquery, [returningUser.email], function(err,rows,fields){
             //console.log(rows); //check content of query
-
             if (err) {
                 return;
             }
 
-            // if row.length=0 there are no entries therefore that unique email is not attached to any account and we can make one.
+            // if row.length=0 there are no entries therefore that email is not attached to a userprofile account. Check against venue/health official accounts within this if statement.
             if (rows.length==0){
-                //console.log("valid email"); // to be removed
-                var insertquery = "INSERT INTO UserProfile (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
-                connection.query(insertquery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields){
-                    connection.release();
+                //console.log("email not in system");
+                var managersquery="SELECT * FROM VenueManager WHERE Email = ?;";
+                connection.query(managersquery, [returningUser.email], function(err,rows,fields){
+                    //console.log(rows); //check content of query
                     if (err) {
                         return;
                     }
-                    res.redirect('/');
+
+                    if (rows.length==0){ //means there is both no users and no managers with that email in the system. try health officials.
+                        var officialsquery="SELECT * FROM HealthOfficial WHERE Email = ?;";
+                        connection.query(officialsquery, [returningUser.email], function(err,rows,fields){
+                            //console.log(rows); //check content of query
+                            if (err) {
+                                return;
+                            }
+
+                            if (rows.length==0){ //means there is both no users and no managers AND no health officials with that email in the system. email does not exist in system. give error.
+                                res.redirect('/login');
+                            } else { //email exists at health official level
+                                connection.release();
+
+                                var tf=bcrypt.compareSync(returningUser.password, rows[0].Password);
+                                if (rows[0].HealthOfficialID==1){ //replace back with tf=true once we have a method for create health official accounts, currently debug
+
+                                    req.session.verified=true;
+                                    req.session.healthofficalid=rows[0].HealthOfficialID;
+                                    res.redirect('/');
+
+                                } else {
+                                    //password wrong but email exists. reprompt them, preferably without reloading the page.
+                                    res.redirect("/login");
+                                }
+
+
+                            }
+                        });
+                    } else { //email does exist at venue management level
+                        connection.release();
+                        var tf=bcrypt.compareSync(returningUser.password, rows[0].Password);
+                        if (tf==true){
+                            req.session.verified=true;
+                            req.session.managerid=rows[0].ManagerID;
+                            res.redirect('/');
+
+                        } else {
+                            //password wrong but email exists. reprompt them, preferably without reloading the page.
+                            res.redirect("/login");
+                        }
+                    }
                 });
 
-            } else { //this account already exists, cannot register again. If email and password are in system, sign them in.
+            } else { //email does exist at userprofile level.
                 connection.release();
-                //verify password here!!
+                var tf=bcrypt.compareSync(returningUser.password, rows[0].Password);
+                if (tf==true){
+                    req.session.verified=true;
+                    req.session.userid=rows[0].UserID
+                    res.redirect('/');
 
-                var tf=bcrypt.compareSync(plaintextpw, rows[0].Password);
-                    if (tf==true){
-                        //console.log("true");
-                        req.session.verified=true;
-                        req.session.userid=rows[0].UserID
-                        res.redirect('/');
-
-                    } else {
-                        //console.log("false");
-                        res.redirect("/register");
-                    }
-
-
-
-
+                } else {
+                    //password wrong but email exists. reprompt them, preferably without reloading the page.
+                    res.redirect("/login");
+                }
             }
         });
     });
-
-
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = router;
