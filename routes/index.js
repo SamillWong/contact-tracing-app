@@ -15,10 +15,7 @@ router.get('/login', function(req, res) {
   return res.sendFile('login.html', { root: 'views' });
 });
 
-router.post('/login', function(req, res) {
-  // TODO: Add input validation and implement server-side
-  return res.send("Success");
-});
+
 
 /*
  * GET/POST register page

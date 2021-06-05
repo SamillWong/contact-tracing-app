@@ -6,6 +6,7 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <script src="javascripts/login.js" defer></script>
     </head>
 
     <body>
@@ -46,30 +47,36 @@
                         <h3>Get started</h3>
                         <p>Create your COVIDTrace account</p>
                     </div>
-    
+
                     <div class="login-input">
-                        <form class="login-form" autocomplete="off" method="POST" action="/register">
+                        <form class="login-form" method="POST" action='/users/register' >
                             <div>
-                                <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" />
-                                <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" />
+                                <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" required/>
+                                <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" required/>
                             </div>
                             <div>
-                                <input class="form-input" type="text" id="username" name="username" placeholder="Username" />
+                                <input class="form-input" type="email" id="username" name="email" placeholder="Email" required/>
                             </div>
                             <div>
-                                <input class="form-input" type="password" id="password" name="password" placeholder="Password" />
+                                <input class="form-input" type="password" id="password" name="password"  placeholder="Password" required/>
                             </div>
                             <div>
-                                <input class="form-input" type="password" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password" />
+                                <input class="form-input" type="password" id="confirmpassword" name="confirmpassword"  placeholder="Confirm Password" oninput=matching(this) required/>
                             </div>
+
                             <div>
-                                <button class="form-submit form-register" type="submit"><span>Register</span></button>
+                                <input class="registerradio" type="radio" id="userbutton" name="type" value="user" required> This is a normal user account.</input><br> <!-- normal user is not a really clear term--->
+                                <input class="registerradio" type="radio" id="managerbutton" name="type"value="manager" required> This is a venue management account.</input>
+                            </div>
+
+                            <div>
+                                <button class="form-submit form-register" type="submit" ><span>Register</span></button>
                             </div>
                         </form>
                     </div>
-    
+
                 </div>
-    
+
             </div>
 
         </div>
