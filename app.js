@@ -6,31 +6,29 @@ var logger = require('morgan');
 var session = require('express-session');
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
+require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
-
-// parse application/x-www-form-urlencoded
+// Parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-// parse application/json
+// Parse application/json
 app.use(bodyParser.json());
 
 var dbConnectionPool = mysql.createPool({
-    host:'localhost',
-    database: 'CovidTrace'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
 });
 
 app.use(function(req,res,next){
-    //console.log("connected");
     req.pool = dbConnectionPool;
     next();
 });
-
-
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
