@@ -1,3 +1,4 @@
+// TODO: Merge router file with index.js
 var express = require('express');
 var router = express.Router();
 
@@ -61,7 +62,7 @@ router.post('/login/verifyDB', function(req,res,next) {
             return;
         }
 
-        var query1 = "SELECT * FROM UserProfile WHERE Email = ?;";
+        var query1 = "SELECT * FROM User WHERE Email = ?;";
         connection.query(query1, [req.body.user], function(err,rows,fields) {
             connection.release();
 
@@ -104,15 +105,11 @@ router.post('/register', function(req, res, next) {
                         type:req.body.type,
                     }
 
-    // Used for comparison later if needed. NOT STORED!
-    var plaintextpw = newUser.password; 
-
     // Overwrite sent password with new hashed/salted password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newUser.password, salt);
     newUser.password = hash;
 
-    // Check if email exists in database. If not, create new entry and allow user to log in.
     req.pool.getConnection(function(err, connection) {
 
         if (err) {
@@ -121,96 +118,44 @@ router.post('/register', function(req, res, next) {
             return;
         }
 
-        // REVIEW: A lot of repeated code here, try to merge the user/manager blocks with conditional queries.
-        // User selected
-        if (newUser.type == "user") {
-            //console.log("user selected");
-            var query1 = "SELECT * FROM UserProfile WHERE Email = ?;";
-            connection.query(query1, [newUser.email], function(err,rows,fields) {
-
-                //console.log(rows); // check content of query
-
-                if (err) {
-                    console.log("Error at connection.query(select)");
-                    res.sendStatus(500);
-                    return;
-                }
-
-                // Account does not exist. Create a new account using provided email.
-                if (rows.length == 0) {
-                    var insertquery = "INSERT INTO UserProfile (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
-                    connection.query(insertquery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields) {
-                        connection.release();
-                        if (err) {
-                            console.log("Error at connection.query(insert)");
-                            res.sendStatus(500);
-                            return;
-                        }
-                        res.redirect('/');
-                    });
-                }
-                // Account already exists. If the email and password are correct, sign them in.
-                else {
-                    connection.release();
-
-                    // Verify password
-                    var tf = bcrypt.compareSync(plaintextpw, rows[0].Password);
-                    if (tf == true) {
-                        req.session.verified = true;
-                        req.session.userid = rows[0].UserID;
-                        res.redirect('/');
-                    }
-                    // If the password is wrong but the email is correct, redirect user to /login
-                    else {
-                        res.redirect("/login");
-                    }
-                }
-            });
-        }
         // Venue manager selected
-        else if (newUser.type == "manager") {
-            //console.log("manager selected");
-            var query1 = "SELECT * FROM VenueManager WHERE Email = ?;";
-            connection.query(query1, [newUser.email], function(err,rows,fields) {
-
-                //console.log(rows); //check content of query
-
-                if (err) {
-                    console.log("Error at connection.query(select)");
-                    return;
-                }
-
-                // Account does not exist. Create a new account using provided email.
-                if (rows.length == 0) {
-                    var insertquery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
-                    connection.query(insertquery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields) {
-                        connection.release();
-                        if (err) {
-                            console.log("Error at connection.query(insert)");
-                            return;
-                        }
-                        res.redirect('/');
-                    });
-
-                }
-                // Account already exists. If the email and password are correct, sign them in.
-                else {
-                    connection.release();
-
-                    // Verify password
-                    var tf = bcrypt.compareSync(plaintextpw, rows[0].Password);
-                    if (tf == true){
-                        req.session.verified = true;
-                        req.session.managerid = rows[0].ManagerID;
-                        res.redirect('/');
-                    }
-                    // If the password is wrong but the email is correct, redirect user to /login
-                    else {
-                        res.redirect("/login");
-                    }
-                }
-            });
+        if (newUser.type == "manager") {
+            var selectQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
+            var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
         }
+        // User selected (default)
+        else {
+            var selectQuery = "SELECT * FROM User WHERE Email = ?;";
+            var insertQuery = "INSERT INTO User (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+        }
+
+        // Check if email exists in database. If not, create new entry.
+        connection.query(selectQuery, [newUser.email], function(err,rows,fields) {
+
+            if (err) {
+                console.log("Error at connection.query(select)\n"+err);
+                res.sendStatus(500);
+                return;
+            }
+
+            // Account does not exist. Create a new account using provided data.
+            if (rows.length == 0) {
+                connection.query(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields) {
+                    connection.release();
+                    if (err) {
+                        console.log("Error at connection.query(insert)");
+                        res.sendStatus(500);
+                        return;
+                    }
+                    res.redirect('/');
+                });
+            }
+            // Account already exists. Redirect user to /login.
+            else {
+                connection.release();
+                res.redirect("/login");
+            }
+        });
     });
 });
 
@@ -223,91 +168,58 @@ router.post('/regular-login', function(req, res, next) {
         password: req.body.password
     }
 
-    // REVIEW: This can be rewritten in a better way, a lot of repeated code here.
-    req.pool.getConnection(function(err, connection) {
+    req.pool.getConnection(async function(err, connection) {
         if (err) {
-            console.log("Error at req.pool.getConnection");
             res.sendStatus(500);
-            return;
         }
 
-        var usersquery = "SELECT * FROM UserProfile WHERE Email = ?;";
-        connection.query(usersquery, [returningUser.email], function(err,rows,fields) {
-            //console.log(rows); //check content of query
-            if (err) {
-                console.log("Error at connection.query(user)");
-                return;
-            }
-
-            // Account does not belong to a user, check if account belongs to a venue manager.
-            if (rows.length == 0) {
-                var managersquery = "SELECT * FROM VenueManager WHERE Email = ?;";
-                connection.query(managersquery, [returningUser.email], function(err,rows,fields) {
-                    //console.log(rows); //check content of query
+        // Query the database with provided email address and return a Promise object
+        getPromise = (query) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, [returningUser.email], function(err,rows,fields) {
                     if (err) {
-                        console.log("Error at connection.query(venue)");
-                        return;
+                        return reject(err);
                     }
-                    // Account does not belong to a user or venue manager, check if account belongs to a health official.
-                    if (rows.length == 0) {
-                        var officialsquery = "SELECT * FROM HealthOfficial WHERE Email = ?;";
-                        connection.query(officialsquery, [returningUser.email], function(err,rows,fields) {
-                            //console.log(rows); //check content of query
-                            if (err) {
-                                console.log("Error at connection.query(healthofficial)");
-                                return;
-                            }
-                            // Account does not exist, redirect to /login.
-                            if (rows.length == 0) {
-                                res.redirect('/login');
-                            } else { //email exists at health official level
-                                connection.release();
-
-                                var tf = bcrypt.compareSync(returningUser.password, rows[0].Password);
-                                // DEBUG: Replace back with tf=true once we have a method for creating health official accounts
-                                if (rows[0].HealthOfficialID == 1) {
-                                    req.session.verified = true;
-                                    req.session.healthofficalid = rows[0].HealthOfficialID;
-                                    res.redirect('/');
-                                }
-                                // Password is wrong but the email exists, allow retry without reloading the page.
-                                else {
-                                    res.redirect("/login");
-                                }
-                            }
-                        });
-                    }
-                    // Account belongs to a venue manager
-                    else {
-                        connection.release();
-                        var tf = bcrypt.compareSync(returningUser.password, rows[0].Password);
-                        if (tf == true) {
-                            req.session.verified = true;
-                            req.session.managerid = rows[0].ManagerID;
-                            res.redirect('/');
-                        }
-                        // Password is wrong but the email exists, allow retry without reloading the page.
-                        else {
-                            res.redirect("/login");
-                        }
-                    }
+                    return resolve(rows);
                 });
+            });
+        }
+
+        // Construct rows from each query
+        async function makeQuery() {
+            const userQuery = "SELECT * FROM User WHERE Email = ?;";
+            const managerQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
+            const officialQuery = "SELECT * FROM HealthOfficial WHERE Email = ?;";
+            const promises = [getPromise(userQuery), getPromise(managerQuery), getPromise(officialQuery)];
+            try {
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
             }
-            // Account belongs to a user
-            else {
-                connection.release();
-                var tf = bcrypt.compareSync(returningUser.password, rows[0].Password);
-                if (tf == true) {
+        }
+        var result = await makeQuery();
+        connection.release();
+
+        // Loop through each account type and compare password hash
+        for (let i = 0; i < 3; i++) {
+            if (result[i].length) {
+                var isMatch = bcrypt.compareSync(returningUser.password, result[i][0].Password);
+                if (isMatch) {
                     req.session.verified = true;
-                    req.session.userid = rows[0].UserID
+                    switch (i) {
+                        case 0: req.session.userid = result[i][0].UserID; break;
+                        case 1: req.session.managerid = result[i][0].ManagerID; break;
+                        case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
+                    }
                     res.redirect('/');
-                }
-                // Password is wrong but the email exists, allow retry without reloading the page.
-                else {
+                } else {
                     res.redirect("/login");
                 }
+                break;
+            } else if (i == 2) {
+                res.redirect("/login");
             }
-        });
+        }
     });
 });
 
