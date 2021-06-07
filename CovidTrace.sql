@@ -39,7 +39,7 @@ CREATE TABLE `CheckIn` (
   KEY `VenueID` (`VenueID`),
   KEY `UserID` (`UserID`),
   CONSTRAINT `CheckIn_ibfk_1` FOREIGN KEY (`VenueID`) REFERENCES `Venue` (`VenueID`),
-  CONSTRAINT `CheckIn_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES `UserProfile` (`UserID`)
+  CONSTRAINT `CheckIn_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -62,7 +62,7 @@ CREATE TABLE `HealthOfficial` (
   PRIMARY KEY (`HealthOfficialID`),
   KEY `CurrentHotspotID` (`CurrentHotspotID`),
   CONSTRAINT `HealthOfficial_ibfk_1` FOREIGN KEY (`CurrentHotspotID`) REFERENCES `Hotspot` (`HotspotID`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,13 +84,13 @@ CREATE TABLE `Hotspot` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `UserProfile`
+-- Table structure for table `User`
 --
 
-DROP TABLE IF EXISTS `UserProfile`;
+DROP TABLE IF EXISTS `User`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `UserProfile` (
+CREATE TABLE `User` (
   `UserID` int(11) NOT NULL AUTO_INCREMENT,
   `Email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Password` varchar(160) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE `UserProfile` (
   `Age` int(11) DEFAULT NULL,
   `ContactNumber` int(11) DEFAULT NULL,
   PRIMARY KEY (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,7 +138,7 @@ CREATE TABLE `VenueManager` (
   PRIMARY KEY (`ManagerID`),
   KEY `ListedVenues` (`ListedVenues`),
   CONSTRAINT `VenueManager_ibfk_1` FOREIGN KEY (`ListedVenues`) REFERENCES `Venue` (`VenueID`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
