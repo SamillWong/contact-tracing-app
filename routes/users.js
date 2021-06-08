@@ -54,42 +54,54 @@ router.post('/login', function(req, res, next) {
 // Google OAuth2 verify
 router.post('/login/verifyDB', function(req,res,next) {
 
-    req.pool.getConnection(function(err, connection) {
-
+    req.pool.getConnection(async function(err, connection) {
         if (err) {
-            console.log("Error at req.pool.getConnection");
             res.sendStatus(500);
-            return;
         }
 
-        var query1 = "SELECT * FROM User WHERE Email = ?;";
-        connection.query(query1, [req.body.user], function(err,rows,fields) {
-            connection.release();
+        // Query the database with provided email address and return a Promise object
+        getPromise = (query) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, [req.body.user], function(err,rows,fields) {
+                    if (err) {
+                        return reject(err);
+                    }
+                    return resolve(rows);
+                });
+            });
+        }
 
-            // console.log(rows); //check content of query
-
-            if (err) {
-                console.log("Error at connection.query");
+        // Construct rows from each query
+        async function makeQuery() {
+            const userQuery = "SELECT * FROM User WHERE Email = ?;";
+            const managerQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
+            const officialQuery = "SELECT * FROM HealthOfficial WHERE Email = ?;";
+            try {
+                const promises = [getPromise(userQuery), getPromise(managerQuery), getPromise(officialQuery)];
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
                 res.sendStatus(500);
-                return;
             }
+        }
+        var result = await makeQuery();
+        connection.release();
 
-            // Nothing is returned from the query, and the user does not exist
-            if (rows.length == 0) {
-                req.verified = false;
-                res.sendStatus(500);
-            }
-            // There is a return back from the query, and the user exists
-            else {
-                // WARNING: This may be insecure
+        // Loop through each account type and compare password hash
+        for (let i = 0; i < 3; i++) {
+            if (result[i].length) {
                 req.session.verified = true;
-                req.session.userid = rows[0].UserID
-
-                //console.log(req.session.userid);
-                //console.log(req.session.verified);
+                switch (i) {
+                    case 0: req.session.userid = result[i][0].UserID; break;
+                    case 1: req.session.managerid = result[i][0].ManagerID; break;
+                    case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
+                }
                 res.sendStatus(200);
+                break;
+            } else if (i == 2) {
+                res.sendStatus(500);
             }
-        });
+        }
     });
 });
 
@@ -190,8 +202,8 @@ router.post('/regular-login', function(req, res, next) {
             const userQuery = "SELECT * FROM User WHERE Email = ?;";
             const managerQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
             const officialQuery = "SELECT * FROM HealthOfficial WHERE Email = ?;";
-            const promises = [getPromise(userQuery), getPromise(managerQuery), getPromise(officialQuery)];
             try {
+                const promises = [getPromise(userQuery), getPromise(managerQuery), getPromise(officialQuery)];
                 return await Promise.all(promises);
             } catch (err) {
                 console.log(err);

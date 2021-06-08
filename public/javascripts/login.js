@@ -1,7 +1,7 @@
 // Google OAuth sign out function
-function signOut() { 
+function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function () {
+    auth2.signOut().then(function () {
         console.log('User signed out.');
     });
 }
@@ -23,7 +23,7 @@ function verifyDB(gmail) {
         } else if (this.readyState == 4 && this.status >= 400) {
             alert("This email does not appear to be registered. Please sign up for an account");
             // Reverts Google login button to its default state
-            signOut(); 
+            signOut();
         }
     };
 
@@ -43,7 +43,7 @@ function onSignIn(googleUser) {
     //console.log('Image URL: ' + profile.getImageUrl());
     //console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
 
-    var usermail=profile.getEmail();
+    var usermail = profile.getEmail();
 
     // Prepare to send the TOKEN to the server for validation
     var id_token = { token: googleUser.getAuthResponse().id_token };
@@ -57,8 +57,6 @@ function onSignIn(googleUser) {
             if (this.readyState == 4 && this.status == 200) {
                 alert("Google Authentication Suceeded");
                 verifyDB(usermail);
-
-
             } else if (this.readyState == 4 && this.status >= 400) {
                 alert("Google Authentication Failed");
             }
@@ -70,6 +68,7 @@ function onSignIn(googleUser) {
         xmlhttp.send(JSON.stringify(id_token));
 }
 
+/* Register password confirmation */
 function matching(input) {
         if (input.value != document.getElementById('password').value) {
             input.setCustomValidity('Passwords must be the same');
