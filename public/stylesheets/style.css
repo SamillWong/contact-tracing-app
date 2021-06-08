@@ -319,8 +319,12 @@ body {
     text-decoration: underline;
 }
 
-.login-social span i {
-    margin-right: 8px;
+.login-social #google-root {
+    margin-bottom: 15px;
+}
+
+.login-social #fb-root {
+    margin-bottom: 10px;
 }
 
 .login-input hr {
@@ -417,27 +421,6 @@ body {
     background-color: #0065ff;
     cursor: pointer;
     border-color: #0065ff;
-}
-
-.oauth-submit {
-    color: rgb(66, 82, 105);
-    font-size: 14px;
-    background-color: white;
-    margin-bottom: 15px;
-    width: 350px;
-    height: 45px;
-    cursor: default;
-    border-color: white;
-    border-radius: 3px;
-    border-style: solid;
-    box-shadow: rgb(0 0 0 / 20%) 1px 1px 5px;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.oauth-submit:hover {
-    background-color: whitesmoke;
-    cursor: pointer;
-    border-color: whitesmoke;
 }
 
 /* FOOTER */
