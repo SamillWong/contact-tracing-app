@@ -39,13 +39,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use(session({                             //           //
-  secret: 'a string of your choice',          //           //
-  resave: false,                              // THIS CODE //
-  saveUninitialized: true,                    //           //
-  cookie: { secure: false }                   //           //
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false, maxAge: 600000 }
 }));
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 
