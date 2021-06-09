@@ -159,7 +159,7 @@ router.post('/register', function(req, res, next) {
                         res.sendStatus(500);
                         return;
                     }
-                    res.redirect('/');
+                    res.redirect('/');  // TODO: Auto-login user
                 });
             }
             // Account already exists. Redirect user to /login.
@@ -217,13 +217,13 @@ router.post('/regular-login', function(req, res, next) {
             if (result[i].length) {
                 var isMatch = bcrypt.compareSync(returningUser.password, result[i][0].Password);
                 if (isMatch) {
-                    req.session.verified = true;
+                    req.session.verified = true;    // TODO: Change to type ID
                     switch (i) {
                         case 0: req.session.userid = result[i][0].UserID; break;
                         case 1: req.session.managerid = result[i][0].ManagerID; break;
                         case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
                     }
-                    res.redirect('/');
+                    res.redirect('/dashboard/profile');
                 } else {
                     res.redirect("/login");
                 }
