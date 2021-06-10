@@ -10,6 +10,9 @@ var vueinst = new Vue({
             return new Promise((resolve, reject) => {
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
+                    if (this.status == 401) {
+                        reject(JSON.parse(this.responseText));
+                    }
                     resolve(JSON.parse(this.responseText));
                 };
                 xmlhttp.open("GET", "/api/profile", true);
