@@ -452,3 +452,8 @@ body {
 .indented p {
     padding-left:3em;
 }
+
+
+#venueRego.venueregister {
+    display:none;
+}
