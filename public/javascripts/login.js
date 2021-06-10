@@ -13,10 +13,10 @@ function signOut() {
 // TODO: Might have to change that to req.session.userid
 function verifyDB(gmail) {
 
-    var urlencodesend = "user="+gmail;
+    var urlencodesend = "user=" + gmail;
     var xmlhttp = new XMLHttpRequest();
 
-    xmlhttp.onreadystatechange = function() {
+    xmlhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             alert("Email Verified");
 
@@ -48,44 +48,41 @@ function onSignIn(googleUser) {
     // Prepare to send the TOKEN to the server for validation
     var id_token = { token: googleUser.getAuthResponse().id_token };
 
-        // Create AJAX Request
-        // FIXME: I want to find a way to use verifyDB before this function call and only run this if it returns true, but AJAX is asynchronous... :(
-        var xmlhttp = new XMLHttpRequest();
+    // Create AJAX Request
+    // FIXME: I want to find a way to use verifyDB before this function call and only run this if it returns true, but AJAX is asynchronous... :(
+    var xmlhttp = new XMLHttpRequest();
 
-        // Define function to run on response
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                alert("Google Authentication Suceeded");
-                verifyDB(usermail);
-            } else if (this.readyState == 4 && this.status >= 400) {
-                alert("Google Authentication Failed");
-            }
-        };
+    // Define function to run on response
+    xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            alert("Google Authentication Suceeded");
+            verifyDB(usermail);
+        } else if (this.readyState == 4 && this.status >= 400) {
+            alert("Google Authentication Failed");
+        }
+    };
 
-        // Open connection to server & send the token using a POST request
-        xmlhttp.open("POST", "/users/login", true);
-        xmlhttp.setRequestHeader("Content-type", "application/json");
-        xmlhttp.send(JSON.stringify(id_token));
+    // Open connection to server & send the token using a POST request
+    xmlhttp.open("POST", "/users/login", true);
+    xmlhttp.setRequestHeader("Content-type", "application/json");
+    xmlhttp.send(JSON.stringify(id_token));
 }
 
 /* Register password confirmation */
 function matching(input) {
-        if (input.value != document.getElementById('password').value) {
-            input.setCustomValidity('Passwords must be the same');
-        }
-        // Password is valid, reset error message
-        else {
-            input.setCustomValidity('');
-        }
+    if (input.value != document.getElementById('password').value) {
+        input.setCustomValidity('Passwords must be the same');
+    }
+    // Password is valid, reset error message
+    else {
+        input.setCustomValidity('');
+    }
 }
 
-var vuerego = new Vue ({
-
-   el:'#venueRego',
-   data : {
-       venueregotf: true,
-       isrequired: "required",
-   }
-
-
+var vuerego = new Vue({
+    el: '#venueRego',
+    data: {
+        venueregotf: true,
+        isrequired: "required",
+    }
 });

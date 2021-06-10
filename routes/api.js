@@ -8,9 +8,9 @@ var expressValidator = require('express-validator');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 
-router.get('/profile', function(req, res, next) {
+router.get('/profile', function (req, res, next) {
 
-    req.pool.getConnection(async function(err, connection) {
+    req.pool.getConnection(async function (err, connection) {
         if (err) {
             res.sendStatus(500);
         }
@@ -19,7 +19,7 @@ router.get('/profile', function(req, res, next) {
         getPromise = (query) => {
             return new Promise((resolve, reject) => {
                 // FIXME: Use separate ID
-                connection.query(query, [req.session.userid], function(err,rows,fields) {
+                connection.query(query, [req.session.userid], function (err, rows, fields) {
                     if (err) {
                         return reject(err);
                     }

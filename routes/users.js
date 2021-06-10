@@ -12,16 +12,16 @@ app.use(expressValidator());
 var bcrypt = require('bcryptjs');
 
 // Google OAuth2 init
-const {OAuth2Client} = require('google-auth-library');
+const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
 // TODO: Rename endpoint with appropriate name
 // Google OAuth2 login
-router.post('/login', function(req, res, next) {
+router.post('/login', function (req, res, next) {
 
     if ('user' in req.body) {
         if (req.body.user in users) {
-            if(users[req.body.user] === req.body.pass) {
+            if (users[req.body.user] === req.body.pass) {
                 req.session.user = req.body.user;
                 res.send(req.session.user);
             } else {
@@ -33,28 +33,28 @@ router.post('/login', function(req, res, next) {
     }
     else if ('token' in req.body) {
         async function verify() {
-          const ticket = await client.verifyIdToken({
-              idToken: req.body.token,
-              audience: process.env.CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
-              // Or, if multiple clients access the backend:
-              //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
-          });
-          const payload = ticket.getPayload();
-          req.session.user = payload['email'];
-          res.send(req.session.user);
+            const ticket = await client.verifyIdToken({
+                idToken: req.body.token,
+                audience: process.env.CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+                // Or, if multiple clients access the backend:
+                //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+            });
+            const payload = ticket.getPayload();
+            req.session.user = payload['email'];
+            res.send(req.session.user);
 
-          // If request specified a G Suite domain:
-          // const domain = payload['hd'];
+            // If request specified a G Suite domain:
+            // const domain = payload['hd'];
         }
-        verify().catch(function(){res.sendStatus(401);});
+        verify().catch(function () { res.sendStatus(401); });
     }
 });
 
 // TODO: Rename endpoint to /auth
 // Google OAuth2 verify
-router.post('/login/verifyDB', function(req,res,next) {
+router.post('/login/verifyDB', function (req, res, next) {
 
-    req.pool.getConnection(async function(err, connection) {
+    req.pool.getConnection(async function (err, connection) {
         if (err) {
             res.sendStatus(500);
         }
@@ -62,7 +62,7 @@ router.post('/login/verifyDB', function(req,res,next) {
         // Query the database with provided email address and return a Promise object
         getPromise = (query) => {
             return new Promise((resolve, reject) => {
-                connection.query(query, [req.body.user], function(err,rows,fields) {
+                connection.query(query, [req.body.user], function (err, rows, fields) {
                     if (err) {
                         return reject(err);
                     }

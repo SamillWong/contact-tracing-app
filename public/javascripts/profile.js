@@ -1,15 +1,15 @@
 var vueinst = new Vue({
     el: '#content',
-    data () {
+    data() {
         return {
             user: null
         }
     },
-    async mounted () {
+    async mounted() {
         getPromise = () => {
             return new Promise((resolve, reject) => {
                 var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function() {
+                xmlhttp.onreadystatechange = function () {
                     if (this.status == 401) {
                         reject(JSON.parse(this.responseText));
                     }
