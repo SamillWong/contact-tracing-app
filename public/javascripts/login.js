@@ -78,3 +78,14 @@ function matching(input) {
             input.setCustomValidity('');
         }
 }
+
+var vuerego = new Vue ({
+
+   el:'#venueRego',
+   data : {
+       venueregotf: true,
+       isrequired: "required",
+   }
+
+
+});

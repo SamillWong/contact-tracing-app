@@ -114,13 +114,39 @@ router.post('/register', function(req, res, next) {
                         lname: req.body.lname,
                         email: req.body.email, // TODO: Make email case-insensitive
                         password: req.body.password,
-                        type:req.body.type,
+                        venuename: req.body.venuename,
+                        address: req.body.address,
+                        suburb: req.body.suburb,
+                        type: req.body.type,
                     }
 
     // Overwrite sent password with new hashed/salted password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newUser.password, salt);
     newUser.password = hash;
+
+
+
+
+
+
+    //Longitude and Latitude calculations
+    var splitaddress=newUser.address.split(" ");
+    var addresslength=splitaddress.length
+
+    var geocodequery="/https://maps.googleapis.com/maps/api/geocode/json?address="
+
+    for (i=0;i<addresslength;i++){
+        geocodequery+=splitaddress[i];
+        geocodequery+='+'
+    }
+
+    geocodequery+=",+"+newUser.suburb+",+SA&key=AIzaSyD0Rnjk-r6Ezi8olChd6eQfpVAgrPh6NXE"; //Finished Geocode query.
+    //console.log(geocodequery);
+
+
+
+
 
     req.pool.getConnection(function(err, connection) {
 
@@ -134,6 +160,7 @@ router.post('/register', function(req, res, next) {
         if (newUser.type == "manager") {
             var selectQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+            var venueInsertQuery = "INSERT INTO Venue (Address, Name, Longitude, Latitude) VALUES (?, ?, 1, 1);"; //TODO: Fix placeholders at 1, 1. Will be replaced with true lat and long once i solve api.
         }
         // User selected (default)
         else {
@@ -153,7 +180,20 @@ router.post('/register', function(req, res, next) {
             // Account does not exist. Create a new account using provided data.
             if (rows.length == 0) {
                 connection.query(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields) {
-                    connection.release();
+
+                    if (newUser.type=="manager"){
+                        connection.query(venueInsertQuery, [newUser.address, newUser.venuename], function(err,rows,field){ //If registering as manager, insert venue details into table: Venue
+                            connection.release();
+                            if (err) {
+                                console.log("Error at connection.query(venueinsert)");
+                                res.sendStatus(500);
+                                return;
+                            }
+                        })
+                    } else { //must be User
+                        connection.release();
+                    }
+
                     if (err) {
                         console.log("Error at connection.query(insert)");
                         res.sendStatus(500);
