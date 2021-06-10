@@ -15,7 +15,77 @@ router.get('/login', function(req, res) {
   return res.sendFile('login.html', { root: 'views' });
 });
 
+// Regular login
+router.post('/login', function(req, res, next) {
+  // TODO: Add input validation and implement server-side
+  var returningUser = {
+      email: req.body.email, // TODO: Make email case-insensitive
+      password: req.body.password
+  }
 
+  req.pool.getConnection(async function(err, connection) {
+      if (err) {
+          res.sendStatus(500);
+      }
+
+      // Query the database with provided email address and return a Promise object
+      getPromise = (query) => {
+          return new Promise((resolve, reject) => {
+              connection.query(query, [returningUser.email], function(err,rows,fields) {
+                  if (err) {
+                      return reject(err);
+                  }
+                  return resolve(rows);
+              });
+          });
+      }
+
+      // Construct rows from each query
+      async function makeQuery() {
+          const userQuery = "SELECT * FROM User WHERE Email = ?;";
+          const managerQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
+          const officialQuery = "SELECT * FROM HealthOfficial WHERE Email = ?;";
+          try {
+              const promises = [getPromise(userQuery), getPromise(managerQuery), getPromise(officialQuery)];
+              return await Promise.all(promises);
+          } catch (err) {
+              console.log(err);
+          }
+      }
+      var result = await makeQuery();
+      connection.release();
+
+      // Loop through each account type and compare password hash
+      for (let i = 0; i < 3; i++) {
+          if (result[i].length) {
+              var isMatch = bcrypt.compareSync(returningUser.password, result[i][0].Password);
+              if (isMatch) {
+                  req.session.verified = i+1;
+                  switch (i) {
+                      case 0: req.session.userid = result[i][0].UserID; break;
+                      case 1: req.session.managerid = result[i][0].ManagerID; break;
+                      case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
+                  }
+                  res.redirect('/dashboard/profile');
+              } else {
+                  res.redirect("/login");
+              }
+              break;
+          } else if (i == 2) {
+              res.redirect("/login");
+          }
+      }
+  });
+});
+
+/*
+ * GET logout page
+ * Users should be able to log out of their account.
+ */
+router.get('/logout', function(req, res) {
+  req.session.destroy();
+  return res.redirect('/');
+});
 
 /*
  * GET/POST register page
@@ -25,7 +95,72 @@ router.get('/register', function(req, res) {
   return res.sendFile('register.html', { root: 'views' });
 });
 
+// Account registration
+router.post('/register', function(req, res, next) {
 
+  // Object to store user values
+  const newUser = {
+                      fname: req.body.fname,
+                      lname: req.body.lname,
+                      email: req.body.email, // TODO: Make email case-insensitive
+                      password: req.body.password,
+                      type:req.body.type,
+                  }
+
+  // Overwrite sent password with new hashed/salted password
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(newUser.password, salt);
+  newUser.password = hash;
+
+  req.pool.getConnection(function(err, connection) {
+
+      if (err) {
+          console.log("Error at req.pool.getConnection\n"+err);
+          res.sendStatus(500);
+          return;
+      }
+
+      // Venue manager selected
+      if (newUser.type == "manager") {
+          var type = 1;
+          var selectQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
+          var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+      }
+      // User selected (default)
+      else {
+          var type = 0;
+          var selectQuery = "SELECT * FROM User WHERE Email = ?;";
+          var insertQuery = "INSERT INTO User (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+      }
+
+      // Check if email exists in database. If not, create new entry.
+      connection.query(selectQuery, [newUser.email], function(err,rows,fields) {
+          if (err) {
+              console.log("Error at connection.query(select)\n"+err);
+              res.sendStatus(500);
+              return;
+          }
+
+          // Account does not exist. Create a new account using provided data.
+          if (rows.length == 0) {
+              connection.query(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function(err,rows,fields) {
+                  connection.release();
+                  if (err) {
+                      console.log("Error at connection.query(insert)\n"+err);
+                      res.sendStatus(500);
+                      return;
+                  }
+                  res.redirect('/login');
+              });
+          }
+          // Account already exists. Redirect user to /login.
+          else {
+              connection.release();
+              res.redirect("/login");
+          }
+      });
+  });
+});
 
 /*
  * GET hotspots page
