@@ -7,6 +7,8 @@
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
         <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="../javascripts/profile.js" defer></script>
     </head>
 
     <body>
@@ -48,25 +50,25 @@
 
                 <div class="info-div">
                     <p>
-                        <b>Username: </b>hwatsford97
+                        <b>Name: </b>{{ user[0].FirstName }} {{ user[0].LastName }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Name: </b>Hamish Watsford
+                        <b>Email: </b>{{ user[0].Email }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Address: </b>92 Marloo Street, HECTORVILLE SA 5073
+                        <b>Address: </b>{{ user[0].Address }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Contact number: </b>(08) 8345 5025
+                        <b>Contact number: </b>{{ user[0].ContactNumber }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
