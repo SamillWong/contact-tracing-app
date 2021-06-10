@@ -111,6 +111,7 @@ DROP TABLE IF EXISTS `Venue`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Venue` (
   `VenueID` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Longitude` decimal(9,6) NOT NULL,
   `Latitude` decimal(8,6) NOT NULL,
