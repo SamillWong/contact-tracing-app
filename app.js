@@ -62,8 +62,15 @@ app.use(session({
 
 // Session middleware
 app.get('/dashboard*', function (req, res, next) {
-    console.log(req.session.verified);
     if (req.session.verified == 1) {
+        next();
+    } else {
+        return res.redirect('/login');
+    }
+});
+
+app.get('/venue*', function (req, res, next) {
+    if (req.session.verified == 2) {
         next();
     } else {
         return res.redirect('/login');
