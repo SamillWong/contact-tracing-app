@@ -31,10 +31,8 @@ router.post('/login', function (req, res, next) {
         // Query the database with provided email address and return a Promise object
         getPromise = (query) => {
             return new Promise((resolve, reject) => {
-                connection.query(query, [returningUser.email], function (err, rows, fields) {
-                    if (err) {
-                        return reject(err);
-                    }
+                connection.query(query, [returningUser.email], function (err, rows) {
+                    if (err) return reject(err);
                     return resolve(rows);
                 });
             });
@@ -107,7 +105,7 @@ router.post('/register', function (req, res, next) {
         venuename: req.body.venuename,
         address: req.body.address,
         suburb: req.body.suburb,
-        type: req.body.type,
+        type: req.body.type
     }
 
     // Overwrite sent password with new hashed/salted password
@@ -115,7 +113,7 @@ router.post('/register', function (req, res, next) {
     const hash = bcrypt.hashSync(newUser.password, salt);
     newUser.password = hash;
 
-    //Longitude and Latitude calculations
+    // Longitude and Latitude calculations
     var splitaddress = newUser.address.split(" ");
     var addresslength = splitaddress.length
     var geocodequery = "/https://maps.googleapis.com/maps/api/geocode/json?address="
@@ -141,6 +139,8 @@ router.post('/register', function (req, res, next) {
         if (newUser.type == "manager") {
             var selectQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
+            // TODO: Placeholders at (1, 1). Will be replaced with longitude and latitude.
+            var venueInsertQuery = "INSERT INTO Venue (Name, Address, Longitude, Latitude) VALUES (?, ?, 1, 1);";
         }
         // User selected (default)
         else {
@@ -148,46 +148,64 @@ router.post('/register', function (req, res, next) {
             var insertQuery = "INSERT INTO User (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
         }
 
-        // Check if email exists in database. If not, create new entry.
-        connection.query(selectQuery, [newUser.email], function (err, rows, fields) {
+        getPromise = (query, param) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, param, function (err, rows) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                })
+            });
+        }
+
+        async function register() {
+            try {
+                if (newUser.type == "manager") {
+                    var promises = [
+                        getPromise(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname]),
+                        getPromise(venueInsertQuery, [newUser.venuename, newUser.address]),
+                        getPromise(selectQuery, [newUser.email])
+                    ];
+                } else {
+                    var promises = [
+                        getPromise(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname]),
+                        getPromise(selectQuery, [newUser.email])
+                    ];
+                }
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        // Checks if email already exists
+        connection.query(selectQuery, [newUser.email], async function (err, rows, fields) {
             if (err) {
                 console.log("Error at connection.query(select)\n" + err);
                 res.sendStatus(500);
                 return;
             }
 
-            // Account does not exist. Create a new account using provided data.
+            // Email does not exist, register new account and log them in
             if (rows.length == 0) {
-                connection.query(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname], function (err, rows, fields) {
-                    // REVIEW: Refactor code to async/await style
-                    if (newUser.type == "manager") {
-                        // If registering as manager, insert venue details into Venue table
-                        connection.query(venueInsertQuery, [newUser.address, newUser.venuename], function (err, rows, field) {
-                            connection.release();
-                            if (err) {
-                                console.log("Error at connection.query(insert)\n" + err);
-                                res.sendStatus(500);
-                                return;
-                            }
-                        })
-                    }
-                    // Must be User
-                    else {
-                        connection.release();
-                    }
-
-                    if (err) {
-                        console.log("Error at connection.query(insert)");
-                        res.sendStatus(500);
-                        return;
-                    }
-                    res.redirect('/login');
-                });
+                var result = await register();
+                connection.release();
+                // Account belongs to a manager, redirect to venue page
+                if (newUser.type == "manager") {
+                    req.session.verified = 2;
+                    req.session.managerid = result[2][0].ManagerID;
+                    res.redirect('/venue');
+                }
+                // Account belongs to a user, redirect to profile page
+                else {
+                    req.session.verified = 1;
+                    req.session.userid = result[1][0].UserID;
+                    res.redirect('/dashboard/profile');
+                }
             }
-            // Account already exists. Redirect user to /login.
+            // Email already exists, redirect to /login
             else {
                 connection.release();
-                res.redirect("/login");
+                res.redirect('/login');
             }
         });
     });
