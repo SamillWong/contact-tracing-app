@@ -20,11 +20,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Parse application/json
 app.use(bodyParser.json());
 
+// MySQL connection
 var dbConnectionPool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME
+});
+
+dbConnectionPool.getConnection(function(err, connection) {
+  if (err) throw err;
+  connection.query('SELECT 1 + 1 AS solution', function (err, rows) {
+    connection.release();
+    if (err) throw err;
+    if (rows[0].solution == 2) {
+      console.log(`Connected to ${process.env.DB_NAME} database on ${process.env.DB_HOST} as ${process.env.DB_USER}`);
+    }
+  });
 });
 
 app.use(function(req,res,next){
@@ -38,7 +50,7 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(session({
@@ -47,6 +59,16 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false, maxAge: 600000 }
 }));
+
+// Session middleware
+app.get('/dashboard*', function(req, res, next) {
+  console.log(req.session.verified);
+  if (req.session.verified == 1) {
+    next();
+  } else {
+    return res.redirect('/login');
+  }
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
