@@ -61,7 +61,7 @@ app.use(session({
 }));
 
 // Session middleware
-app.get('/login', function (req, res, next) {
+app.get(['/login', '/register'], function (req, res, next) {
     switch (req.session.verified) {
         case 1: return res.redirect('/dashboard/profile');
         case 2: return res.redirect('/venue');
@@ -70,7 +70,7 @@ app.get('/login', function (req, res, next) {
     next();
 });
 
-app.post('/login', function (req, res, next) {
+app.post(['/login', '/register'], function (req, res, next) {
     if (req.session.verified) return res.sendStatus(200);
     next();
 });
