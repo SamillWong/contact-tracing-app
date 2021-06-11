@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Health Official - COVIDTrace</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+        <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
+    </head>
+
+    <body>
+
+        <div id="page-container">
+
+            <div id="content">
+
+                <header class="header">
+                    <a href="/"><b>COVIDTrace</b></a>
+                    <% if (params.verified > 0) { %>
+                        <a href="/logout" class="header-right">Logout</a>
+                        <a href="/dashboard/profile" class="header-right">Profile</a>
+                    <% } else { %>
+                        <a href="/register" class="header-right">Register</a>
+                        <a href="/login" class="header-right">Login</a>
+                    <% } %>
+                    <% if (params.verified == 1) { %>
+                        <a href="/dashboard/check-in">Check-in</a>
+                        <a href="/dashboard/alerts">View Alerts</a>
+                    <% } %>
+                    <a href="/hotspots">View Hotspots</a>
+                    <% if (params.verified == 2) { %>
+                        <a href="/venue">Manage Venue</a>
+                    <% } %>
+                    <% if (params.verified == 3) { %>
+                        <a href="/admin" class="header-right">Health Official</a>
+                    <% } %>
+                </header>
+
+                <div class="breadcrumb-div">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>
+                            <a href="/dashboard">Dashboard</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>Health Official</li>
+                    </ul>
+                </div>
+
+                 <div class="title-div">
+                    <h2>Health Official</h2>
+                    <p>View and manage hotspots, users and venues</p>
+                </div>
+
+            <div style = "width:100%;">
+                <div style = "float:left;width:50%;height:400px;margin-left:22%;margin-right:-22%;margin-bottom:-100px">
+                    <form class="login-form" autocomplete="off" method="POST">
+
+                            <p>User search</p>
+                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "user..">
+                            <button class="form-submit" id = "health-official-button" type="submit" value="login"><span>Search</span></button>
+                    </form>
+
+
+
+                    <form class="login-form" autocomplete="offs" method="POST">
+
+                            <p>Venue search</p>
+                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "venue..">
+                            <button class="form-submit" id = "health-official-button" type="submit" value="login"><span>Search</span></button>
+                    </form>
+
+                    <form class="login-form" autocomplete="offs" method="POST">
+
+                            <p>Add Hotspot</p>
+                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "address..">
+                            <button class="form-submit" id = "health-official-button" type="submit" value="login"><span>Add</span></button>
+                    </form>
+                </div>
+
+                <div style = "margin-top:3%;">
+
+
+                        <div class="login-header">
+                            <p>Register a Health Official</p>
+                        </div>
+
+                        <div class="login-input">
+                            <form class="login-form" method="POST">
+                                <div style = "height:50px;float:left;width:50%">
+                                    <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" style = "padding:10px;margin-right:10px"/>
+                                    <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" style = "padding:10px;margin-left:10px;float:left;"/>
+                                </div>
+                                <div>
+                                    <input class="form-input" type="text" id="username" name="username" placeholder="Email" style = "padding: 10px;"/>
+                                </div>
+
+                                <div>
+                                    <input class="form-input" type="password" id="password" name="password" placeholder="Password" style = "padding: 10px;"/>
+                                </div>
+                                <div>
+                                    <input class="form-input" type="password" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password" style = "padding: 10px;"/>
+                                </div>
+                                <div>
+                                    <button class="form-submit form-register" type="submit"><span>Register</span></button>
+                                </div>
+                            </form>
+                        </div>
+
+                </div>
+            </div>
+
+
+
+               <div class="venue-table-div" style = "margin-bottom:50px;">
+                   <div style = "float:left;width:600px;">
+                       <p>Current Venue Hotspots</p>
+                   </div>
+                    <table class="venue-table">
+                        <tr>
+                            <th>Venue ID</th>
+                            <th>Venue Name</th>
+                            <th colspan="2">Venue Address</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td><a href="#">Woodville Pizza Bar</a></td>
+                            <td>1/58 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
+                            <td><a href="#" class="venue-button">Remove Hotspot</a></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><a href="#">Snap Fitness Woodville 24/7</a></td>
+                            <td>57 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
+                            <td><a href="#" class="venue-button">Remove Hotspot</a></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                 <footer class="footer">
+                    <div class="footer-div">
+                        <p class="footer-left"><b>COVIDTrace</b></p>
+                        <p class="footer-left">If you need information about COVID-19 or COVID-19 vaccines, please call 1800 020 080.</p>
+                        <p class="footer-left">
+                            <a href="#">Privacy Policy</a> &bull;
+                            <a href="#">Terms of Use</a> &bull;
+                            <a href="#">Copyright Information</a>
+                    </p>
+                </div>
+            </footer>
+    </body>
+</html>
