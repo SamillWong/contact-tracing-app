@@ -4,7 +4,8 @@ var bcrypt = require('bcryptjs');
 
 /* GET home page */
 router.get('/', function (req, res) {
-    return res.sendFile('index.html', { root: 'views' });
+    return res.render('index.ejs', {params: {verified: req.session.verified}});
+    // return res.sendFile('index.html', { root: 'views' });
 });
 
 /*
@@ -226,7 +227,8 @@ router.post('/register', function (req, res, next) {
  * Users should be able to see current hotspots on a map.
  */
 router.get('/hotspots', function (req, res) {
-    return res.sendFile('hotspots.html', { root: 'views' });
+    return res.render('hotspots.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('hotspots.html', { root: 'views' });
 });
 
 /*
@@ -234,7 +236,8 @@ router.get('/hotspots', function (req, res) {
  * Logged-in users should be able to view all accessible routes.
  */
 router.get('/dashboard', function (req, res) {
-    return res.sendFile('dashboard.html', { root: 'views' });
+    return res.render('dashboard.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('dashboard.html', { root: 'views' });
 });
 
 /*
@@ -242,7 +245,8 @@ router.get('/dashboard', function (req, res) {
  * Logged-in users should be able to check-in by enter a code or scanning a QR code.
  */
 router.get('/dashboard/check-in', function (req, res) {
-    return res.sendFile('check-in.html', { root: 'views' });
+    return res.render('check-in.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('check-in.html', { root: 'views' });
 });
 
 router.post('/dashboard/check-in', function (req, res) {
@@ -302,7 +306,8 @@ router.get('/dashboard/check-in-history', function (req, res) {
  * Logged-in users should be able to see if they have been to a hotspot.
  */
 router.get('/dashboard/alerts', function (req, res) {
-    return res.sendFile('alerts.html', { root: 'views' });
+    return res.render('alerts.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('alerts.html', { root: 'views' });
 });
 
 /*
@@ -310,7 +315,8 @@ router.get('/dashboard/alerts', function (req, res) {
  * Logged-in users should be able to view and edit their user information.
  */
 router.get('/dashboard/profile', function (req, res) {
-    return res.sendFile('profile.html', { root: 'views' });
+    return res.render('profile.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('profile.html', { root: 'views' });
 });
 
 router.post('/dashboard/profile', function (req, res) {
@@ -323,7 +329,8 @@ router.post('/dashboard/profile', function (req, res) {
  * Managers should be able to view and edit their venue information.
  */
 router.get('/venue', function (req, res) {
-    return res.sendFile('venue.html', { root: 'views' });
+    return res.render('venue.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('venue.html', { root: 'views' });
 });
 
 router.post('/venue', function (req, res) {
@@ -357,7 +364,8 @@ router.post('/admin-login', function (req, res) {
  * Admins should be able to view all accessible routes.
  */
 router.get('/admin', function (req, res) {
-    return res.sendFile('admin.html', { root: 'views' });
+    return res.render('admin.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('admin.html', { root: 'views' });
 });
 
 /*
