@@ -61,6 +61,20 @@ app.use(session({
 }));
 
 // Session middleware
+app.get('/login', function (req, res, next) {
+    switch (req.session.verified) {
+        case 1: return res.redirect('/dashboard/profile');
+        case 2: return res.redirect('/venue');
+        case 3: return res.redirect('/admin');
+    }
+    next();
+});
+
+app.post('/login', function (req, res, next) {
+    if (req.session.verified) return res.sendStatus(200);
+    next();
+});
+
 app.get('/dashboard*', function (req, res, next) {
     if (req.session.verified == 1) {
         next();
