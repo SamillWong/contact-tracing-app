@@ -71,7 +71,7 @@ router.get('/check-in', function (req, res, next) {
 
         // Construct rows from each query
         async function makeQuery() {
-            const query = "SELECT CheckIn.CheckInID, CheckIn.Date, Venue.Name, Venue.Address FROM CheckIn INNER JOIN Venue ON Venue.VenueID=CheckIn.VenueID WHERE CheckIn.UserID = ?;";
+            const query = "SELECT CheckIn.CheckInID, CheckIn.Date, Venue.Name, Venue.Address FROM CheckIn INNER JOIN Venue ON Venue.VenueID=CheckIn.VenueID WHERE CheckIn.UserID = ? ORDER BY CheckIn.CheckInID;";
             try {
                 const promises = [getPromise(query)];
                 return await Promise.all(promises);
