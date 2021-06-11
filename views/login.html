@@ -8,10 +8,11 @@
         <link rel="stylesheet" href="fontawesome/css/all.css">
         <script src="javascripts/login.js" defer></script>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v11.0&appId=629716484615302&autoLogAppEvents=1" nonce="kOu7S6SD"></script>
         <meta name="google-signin-client_id" content="1064925142905-hd2taue727i7qv0b858gltpde696poeu.apps.googleusercontent.com">
     </head>
 
-    <body id="login-body">
+    <body id="login-body" onload="signOut()">
 
         <div class="login-page">
             <div class="login-block">
@@ -22,7 +23,7 @@
                 </div>
 
                 <div class="login-input">
-                    <form class="login-form" method="POST" action='/users/regular-login'>
+                    <form class="login-form" method="POST" action='/login'>
                         <div>
                             <input class="form-input" type="text" id="username" name="email" placeholder="Enter email" />
                         </div>
@@ -37,21 +38,11 @@
 
                 <p class="or">OR</p>
                 <div class="login-social">
-                    <div>
-                        <button class="oauth-submit" type="button"><span><i class="fab fa-google"></i><b>Continue with Google</b></span></button>
+                    <div id="google-root">
+                        <div class="g-signin2" data-width="350" data-height="45" data-longtitle="true" data-onsuccess="onSignIn"></div>
                     </div>
-
-
-                    <!-- GOOGLE LOG IN STUFF--->
-
-                    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                    <a href="#" onclick="signOut();">Sign out</a>
-
-
-
-
-                    <div>
-                        <button class="oauth-submit" type="button"><span><i class="fab fa-facebook-f"></i><b>Continue with Facebook</b></span></button>
+                    <div id="fb-root">
+                        <div class="fb-login-button" data-width="350" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"></div>
                     </div>
                 </div>
 
