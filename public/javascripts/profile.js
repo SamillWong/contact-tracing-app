@@ -1,33 +1,43 @@
+getPromise = (url) => {
+    return new Promise((resolve, reject) => {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.status == 401) {
+                reject(JSON.parse(this.responseText));
+            }
+            resolve(JSON.parse(this.responseText));
+        };
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    });
+};
+
+async function sendAJAX(url) {
+    try {
+        const promises = [getPromise(url)];
+        return await Promise.all(promises);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 var vueinst = new Vue({
     el: '#content',
     data() {
         return {
-            user: null
+            user: null,
+            checkIn: null
         }
     },
     async mounted() {
-        getPromise = () => {
-            return new Promise((resolve, reject) => {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function () {
-                    if (this.status == 401) {
-                        reject(JSON.parse(this.responseText));
-                    }
-                    resolve(JSON.parse(this.responseText));
-                };
-                xmlhttp.open("GET", "/api/profile", true);
-                xmlhttp.send();
-            });
-        };
-
-        async function sendAJAX() {
-            try {
-                const promises = [getPromise()];
-                return await Promise.all(promises);
-            } catch (err) {
-                console.log(err);
-            }
+        var profile = await sendAJAX("/api/profile");
+        this.user = profile[0];
+        var checkIn = await sendAJAX("/api/check-in");
+        for (entry in checkIn[0]) {
+            const oldStamp = checkIn[0][entry].Date
+            checkIn[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
         }
-        this.user = await sendAJAX();
+        console.log(checkIn[0][0].Date);
+        this.checkIn = checkIn[0];
     }
 });
