@@ -12,7 +12,6 @@ app.use(expressValidator());
 router.get('/profile', function (req, res, next) {
 
     if (req.session.verified != 1) {
-        console.log("Not logged in!");
         return res.sendStatus(401);
     }
 
@@ -52,7 +51,6 @@ router.get('/profile', function (req, res, next) {
 router.get('/check-in', function (req, res, next) {
 
     if (req.session.verified != 1) {
-        console.log("Not logged in!");
         return res.sendStatus(401);
     }
 
