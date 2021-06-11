@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `CheckIn`;
 CREATE TABLE `CheckIn` (
   `CheckInID` int(11) NOT NULL AUTO_INCREMENT,
   `VenueID` int(11) NOT NULL,
-  `Date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `UserID` int(11) NOT NULL,
   PRIMARY KEY (`CheckInID`),
   KEY `VenueID` (`VenueID`),
