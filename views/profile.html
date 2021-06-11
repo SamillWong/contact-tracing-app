@@ -50,25 +50,25 @@
 
                 <div class="info-div">
                     <p>
-                        <b>Name: </b>{{ user[0].FirstName }} {{ user[0].LastName }}
+                        <b>Name: </b>{{ user.FirstName }} {{ user.LastName }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Email: </b>{{ user[0].Email }}
+                        <b>Email: </b>{{ user.Email }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Address: </b>{{ user[0].Address }}
+                        <b>Address: </b>{{ user.Address }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Contact number: </b>{{ user[0].ContactNumber }}
+                        <b>Contact number: </b>{{ user.ContactNumber }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -83,17 +83,11 @@
                             <th>Venue Name</th>
                             <th>Venue Address</th>
                         </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>12 May 2021 17:04:04 GMT+09:30</td>
-                            <td>Woodville Pizza Bar</td>
-                            <td>1/58 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>13 May 2021 22:13:42 GMT+09:30</td>
-                            <td>Snap Fitness Woodville 24/7</td>
-                            <td>57 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
+                        <tr v-for="(entry,i) in checkIn" :key="i">
+                            <td>{{ entry.CheckInID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.Name }}</td>
+                            <td>{{ entry.Address }}</td>
                         </tr>
                     </table>
                 </div>
