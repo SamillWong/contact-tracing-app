@@ -8,7 +8,53 @@ var expressValidator = require('express-validator');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 
+/* Endpoint for getting profile details */
 router.get('/profile', function (req, res, next) {
+
+    if (req.session.verified != 1) {
+        console.log("Not logged in!");
+        return res.sendStatus(401);
+    }
+
+    req.pool.getConnection(async function (err, connection) {
+        if (err) {
+            res.sendStatus(500);
+        }
+
+        // Query the database with UserID and return a Promise object
+        getPromise = (query) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, [req.session.userid], function (err, rows, fields) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                });
+            });
+        }
+
+        // Construct rows from each query
+        async function makeQuery() {
+            const userQuery = "SELECT User.FirstName, User.LastName, User.Email, User.Address, User.ContactNumber FROM User WHERE UserID = ?;";
+            try {
+                const promises = [getPromise(userQuery)];
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        var result = await makeQuery();
+        connection.release();
+
+        res.send(JSON.stringify(result[0][0]));
+    });
+});
+
+/* Endpoint for getting check-in entries */
+router.get('/check-in', function (req, res, next) {
+
+    if (req.session.verified != 1) {
+        console.log("Not logged in!");
+        return res.sendStatus(401);
+    }
 
     req.pool.getConnection(async function (err, connection) {
         if (err) {
@@ -18,11 +64,8 @@ router.get('/profile', function (req, res, next) {
         // Query the database with provided email address and return a Promise object
         getPromise = (query) => {
             return new Promise((resolve, reject) => {
-                // FIXME: Use separate ID
                 connection.query(query, [req.session.userid], function (err, rows, fields) {
-                    if (err) {
-                        return reject(err);
-                    }
+                    if (err) return reject(err);
                     return resolve(rows);
                 });
             });
@@ -30,11 +73,9 @@ router.get('/profile', function (req, res, next) {
 
         // Construct rows from each query
         async function makeQuery() {
-            const userQuery = "SELECT * FROM User WHERE UserID = ?;";
-            const managerQuery = "SELECT * FROM VenueManager WHERE ManagerID = ?;";
-            const officialQuery = "SELECT * FROM HealthOfficial WHERE HealthOfficialID = ?;";
+            const query = "SELECT CheckIn.CheckInID, CheckIn.Date, Venue.Name, Venue.Address FROM CheckIn INNER JOIN Venue ON Venue.VenueID=CheckIn.VenueID WHERE CheckIn.UserID = ?;";
             try {
-                const promises = [getPromise(userQuery), getPromise(managerQuery), getPromise(officialQuery)];
+                const promises = [getPromise(query)];
                 return await Promise.all(promises);
             } catch (err) {
                 console.log(err);
@@ -43,17 +84,7 @@ router.get('/profile', function (req, res, next) {
         var result = await makeQuery();
         connection.release();
 
-        // Loop through each account type and return user information
-        for (let i = 0; i < 3; i++) {
-            if (result[i].length) {
-                // Hide password hash from result
-                delete result[i][0]["Password"];
-                res.send(JSON.stringify(result[i][0]));
-                break;
-            } else if (i == 2) {
-                res.sendStatus(401);
-            }
-        }
+        res.send(JSON.stringify(result[0]));
     });
 });
 
