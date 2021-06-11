@@ -37,7 +37,6 @@ var vueinst = new Vue({
             const oldStamp = checkIn[0][entry].Date
             checkIn[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
         }
-        console.log(checkIn[0][0].Date);
         this.checkIn = checkIn[0];
     }
 });
