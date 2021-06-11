@@ -23,6 +23,11 @@ router.post('/login', function (req, res, next) {
         password: req.body.password
     }
 
+    //Reset session details on login. TODO: Create a sign-out function that does this.
+    req.session.userid=null;
+    req.session.managerid=null;
+    req.session.healthofficalid=null;
+
     req.pool.getConnection(async function (err, connection) {
         if (err) {
             res.sendStatus(500);
@@ -64,7 +69,15 @@ router.post('/login', function (req, res, next) {
                         case 1: req.session.managerid = result[i][0].ManagerID; break;
                         case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
                     }
-                    res.redirect('/dashboard/profile');
+                    //Redirect user to page relevant to their sign in.
+                    if (req.session.userid!= null){
+                        res.redirect('/dashboard/profile');
+                    } else if (req.session.managerid!= null){
+                        res.redirect('/venue');
+                    } else if (req.session.healthofficalid!= null){
+                        res.redirect('/admin');
+                    }
+
                 } else {
                     res.redirect("/login");
                 }
