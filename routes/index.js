@@ -23,11 +23,6 @@ router.post('/login', function (req, res, next) {
         password: req.body.password
     }
 
-    //Reset session details on login. TODO: Create a sign-out function that does this.
-    req.session.userid=null;
-    req.session.managerid=null;
-    req.session.healthofficalid=null;
-
     req.pool.getConnection(async function (err, connection) {
         if (err) {
             res.sendStatus(500);
@@ -65,19 +60,21 @@ router.post('/login', function (req, res, next) {
                 if (isMatch) {
                     req.session.verified = i + 1;
                     switch (i) {
-                        case 0: req.session.userid = result[i][0].UserID; break;
-                        case 1: req.session.managerid = result[i][0].ManagerID; break;
-                        case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
+                        case 0:
+                            req.session.userid = result[i][0].UserID;
+                            res.redirect('/dashboard/profile');
+                            break;
+                        case 1:
+                            req.session.managerid = result[i][0].ManagerID;
+                            res.redirect('/venue');
+                            break;
+                        case 2:
+                            req.session.healthofficalid = result[i][0].HealthOfficialID;
+                            res.redirect('/admin');
+                            break;
+                        default:
+                            res.redirect('/login')
                     }
-                    //Redirect user to page relevant to their sign in.
-                    if (req.session.userid!= null){
-                        res.redirect('/dashboard/profile');
-                    } else if (req.session.managerid!= null){
-                        res.redirect('/venue');
-                    } else if (req.session.healthofficalid!= null){
-                        res.redirect('/admin');
-                    }
-
                 } else {
                     res.redirect("/login");
                 }
@@ -250,9 +247,9 @@ router.get('/dashboard/check-in', function (req, res) {
 
 router.post('/dashboard/check-in', function (req, res) {
 
-    var receivedcode=req.body.checkincode;
+    var receivedcode = req.body.checkincode;
 
-    req.pool.getConnection(function (err, connection){
+    req.pool.getConnection(function (err, connection) {
         if (err) {
             console.log("Error at req.pool.getConnection\n" + err);
             res.sendStatus(500);
@@ -262,36 +259,30 @@ router.post('/dashboard/check-in', function (req, res) {
         //Verify that the Checkin code matches an existing venue.
         var verifyvenueQuery = "SELECT * FROM Venue WHERE VenueID = ?;";
 
-        connection.query(verifyvenueQuery, [receivedcode], async function (err, rows, fields){
+        connection.query(verifyvenueQuery, [receivedcode], async function (err, rows, fields) {
             if (err) {
                 console.log("Error at req.pool.getConnection\n" + err);
                 res.sendStatus(500);
                 return;
             }
 
-            if (rows.length==0){ //Venue does not exist send error.
+            // Venue does not exist, send error response.
+            if (rows.length == 0) {
                 connection.release();
                 res.redirect('/dashboard/check-in');
-            } else { //Venue does exist. Create Checkin entry.
-                var insertCheckIn= "INSERT INTO CheckIn (VenueID, Date, UserID) VALUES (?, ?, ?);";
+            }
+            // Venue exists, create a new check-in entry.
+            else {
+                var insertCheckIn = "INSERT INTO CheckIn (VenueID, UserID) VALUES (?, ?);";
 
-                var timecalc= new Date();
-                var timeanddate="";
-                timeanddate+=timecalc.toLocaleDateString();
-                timeanddate+=" " + timecalc.toLocaleTimeString(); //TODO: For some reason this is giving GMT time despite it being localeString. Unsure of solution. May be different per system. Can just accept GMT and remove "+0930" 1 line down
-                timeanddate+=" GMT+0930" //Time and Data finalised here. Format:  6/11/2021 10:47:21 AM GMT+0930
-
-                //console.log(timeanddate);
-
-                connection.query(insertCheckIn, [receivedcode, timeanddate, req.session.userid], async function (err, rows, fields){
+                connection.query(insertCheckIn, [receivedcode, req.session.userid], async function (err, rows, fields) {
                     connection.release();
                     if (err) {
                         console.log("Error at insertCheckIn query\n" + err);
                         res.sendStatus(500);
                         return;
-                    } else {
-                        res.redirect('/dashboard/profile');
                     }
+                    res.redirect('/dashboard/profile');
                 });
             }
         })
