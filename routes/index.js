@@ -63,7 +63,7 @@ router.post('/login', function (req, res, next) {
                     switch (i) {
                         case 0:
                             req.session.userid = result[i][0].UserID;
-                            res.redirect('/dashboard/profile');
+                            res.redirect('/profile');
                             break;
                         case 1:
                             req.session.managerid = result[i][0].ManagerID;
@@ -210,7 +210,7 @@ router.post('/register', function (req, res, next) {
                 else {
                     req.session.verified = 1;
                     req.session.userid = result[1][0].UserID;
-                    res.redirect('/dashboard/profile');
+                    res.redirect('/profile');
                 }
             }
             // Email already exists, redirect to /login
@@ -286,7 +286,7 @@ router.post('/dashboard/check-in', function (req, res) {
                         res.sendStatus(500);
                         return;
                     }
-                    res.redirect('/dashboard/profile');
+                    res.redirect('/profile');
                 });
             }
         })
@@ -314,12 +314,12 @@ router.get('/dashboard/alerts', function (req, res) {
  * GET/POST profile page
  * Logged-in users should be able to view and edit their user information.
  */
-router.get('/dashboard/profile', function (req, res) {
+router.get('/profile', function (req, res) {
     return res.render('profile.ejs', {params: {verified: req.session.verified}});
     //return res.sendFile('profile.html', { root: 'views' });
 });
 
-router.post('/dashboard/profile', function (req, res) {
+router.post('/profile', function (req, res) {
     // TODO: Implement server-side
     return res.send("Success");
 });
