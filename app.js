@@ -9,7 +9,10 @@ var bodyParser = require('body-parser');
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var dashboardRouter = require('./routes/dashboard')
+var oauthRouter = require('./routes/oauth');
+var venueRouter = require('./routes/venue');
+var adminRouter = require('./routes/admin');
 var apiRouter = require('./routes/api');
 var debugRouter = require('./routes/debug');
 
@@ -46,7 +49,8 @@ app.use(function (req, res, next) {
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -61,6 +65,28 @@ app.use(session({
 }));
 
 // Session middleware
+app.get(['/login', '/register'], function (req, res, next) {
+    switch (req.session.verified) {
+        case 1: return res.redirect('/profile');
+        case 2: return res.redirect('/venue');
+        case 3: return res.redirect('/admin');
+    }
+    next();
+});
+
+app.post(['/login', '/register'], function (req, res, next) {
+    if (req.session.verified) return res.sendStatus(200);
+    next();
+});
+
+app.get('/profile*', function (req, res, next) {
+    if (req.session.verified > 0) {
+        next();
+    } else {
+        return res.redirect('/login');
+    }
+});
+
 app.get('/dashboard*', function (req, res, next) {
     if (req.session.verified == 1) {
         next();
@@ -80,7 +106,10 @@ app.get('/venue*', function (req, res, next) {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/dashboard', dashboardRouter);
+app.use('/oauth', oauthRouter);
+app.use('/venue', venueRouter);
+app.use('/admin', adminRouter);
 app.use('/api', apiRouter);
 app.use('/debug', debugRouter);
 
@@ -97,7 +126,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.render('error.ejs', {params: {verified: req.session.verified}});
 });
 
 module.exports = app;

@@ -19,14 +19,24 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
-                    <a href="/register" class="header-right">Register</a>
-                    <a href="/login" class="header-right">Login</a>
-                    <a href="/dashboard/profile" class="header-right">Profile</a>
-                    <a href="/dashboard/check-in">Check-in</a>
-                    <a href="/dashboard/alerts">View Alerts</a>
+                    <% if (params.verified > 0) { %>
+                        <a href="/logout" class="header-right">Logout</a>
+                        <a href="/profile" class="header-right">Profile</a>
+                    <% } else { %>
+                        <a href="/register" class="header-right">Register</a>
+                        <a href="/login" class="header-right">Login</a>
+                    <% } %>
+                    <% if (params.verified == 1) { %>
+                        <a href="/dashboard/check-in">Check-in</a>
+                        <a href="/dashboard/alerts">View Alerts</a>
+                    <% } %>
                     <a href="/hotspots">View Hotspots</a>
-                    <a href="/venue">Manage Venue</a>
-                    <a href="/admin" class="header-right-hidden">Health Official Portal</a>
+                    <% if (params.verified == 2) { %>
+                        <a href="/venue">Manage Venue</a>
+                    <% } %>
+                    <% if (params.verified == 3) { %>
+                        <a href="/admin" class="header-right">Health Official</a>
+                    <% } %>
                 </header>
 
                 <div class="breadcrumb-div">
@@ -75,22 +85,24 @@
                     </p>
                 </div>
 
-                <div class="venue-table-div">
-                    <table class="venue-table">
-                        <tr>
-                            <th>Check-in ID</th>
-                            <th>Timestamp</th>
-                            <th>Venue Name</th>
-                            <th>Venue Address</th>
-                        </tr>
-                        <tr v-for="(entry,i) in checkIn" :key="i">
-                            <td>{{ entry.CheckInID }}</td>
-                            <td>{{ entry.Date }}</td>
-                            <td>{{ entry.Name }}</td>
-                            <td>{{ entry.Address }}</td>
-                        </tr>
-                    </table>
-                </div>
+                <% if (params.verified == 1) { %>
+                    <div class="venue-table-div">
+                        <table class="venue-table">
+                            <tr>
+                                <th>Check-in ID</th>
+                                <th>Timestamp</th>
+                                <th>Venue Name</th>
+                                <th>Venue Address</th>
+                            </tr>
+                            <tr v-for="(entry,i) in checkIn" :key="i">
+                                <td>{{ entry.CheckInID }}</td>
+                                <td>{{ entry.Date }}</td>
+                                <td>{{ entry.Name }}</td>
+                                <td>{{ entry.Address }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                <% } %>
 
             </div>
 

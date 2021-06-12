@@ -1,10 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcryptjs');
+var axios = require('axios');
 
 /* GET home page */
 router.get('/', function (req, res) {
-    return res.sendFile('index.html', { root: 'views' });
+    return res.render('index.ejs', { params: { verified: req.session.verified } });
+    // return res.sendFile('index.html', { root: 'views' });
 });
 
 /*
@@ -60,11 +62,21 @@ router.post('/login', function (req, res, next) {
                 if (isMatch) {
                     req.session.verified = i + 1;
                     switch (i) {
-                        case 0: req.session.userid = result[i][0].UserID; break;
-                        case 1: req.session.managerid = result[i][0].ManagerID; break;
-                        case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
+                        case 0:
+                            req.session.userid = result[i][0].UserID;
+                            res.redirect('/profile');
+                            break;
+                        case 1:
+                            req.session.managerid = result[i][0].ManagerID;
+                            res.redirect('/venue');
+                            break;
+                        case 2:
+                            req.session.healthofficalid = result[i][0].HealthOfficialID;
+                            res.redirect('/admin');
+                            break;
+                        default:
+                            res.redirect('/login')
                     }
-                    res.redirect('/dashboard/profile');
                 } else {
                     res.redirect("/login");
                 }
@@ -93,6 +105,37 @@ router.get('/register', function (req, res) {
     return res.sendFile('register.html', { root: 'views' });
 });
 
+// Returns latitude and longtitude
+async function getLat(givenaddress) {
+    try {
+        const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+            params: {
+                address: givenaddress,
+                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+            }
+        });
+        var newLatitude = response.data.results[0].geometry.location.lat;
+        return await newLatitude;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getLong(givenaddress) {
+    try {
+        const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+            params: {
+                address: givenaddress,
+                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+            }
+        });
+        var newLongitude = response.data.results[0].geometry.location.lng;
+        return await newLongitude;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Account registration
 router.post('/register', function (req, res, next) {
 
@@ -113,20 +156,18 @@ router.post('/register', function (req, res, next) {
     const hash = bcrypt.hashSync(newUser.password, salt);
     newUser.password = hash;
 
-    // Longitude and Latitude calculations
+    // Longitude and Latitude calculations address details
     var splitaddress = newUser.address.split(" ");
     var addresslength = splitaddress.length
-    var geocodequery = "/https://maps.googleapis.com/maps/api/geocode/json?address="
+    var fulladdress = "";
 
     for (let i = 0; i < addresslength; i++) {
-        geocodequery += splitaddress[i];
-        geocodequery += '+'
+        fulladdress += splitaddress[i];
+        fulladdress += '+'
     }
+    fulladdress += ",+" + newUser.suburb + ",+SA";
 
-    // Complete geocode query
-    geocodequery += ",+" + newUser.suburb + ",+SA&key=AIzaSyD0Rnjk-r6Ezi8olChd6eQfpVAgrPh6NXE";
-    //console.log(geocodequery);
-
+    //Query database and insert if neccessary.
     req.pool.getConnection(function (err, connection) {
 
         if (err) {
@@ -137,14 +178,13 @@ router.post('/register', function (req, res, next) {
 
         // Venue manager selected
         if (newUser.type == "manager") {
-            var selectQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
+            var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
-            // TODO: Placeholders at (1, 1). Will be replaced with longitude and latitude.
-            var venueInsertQuery = "INSERT INTO Venue (Name, Address, Longitude, Latitude) VALUES (?, ?, 1, 1);";
+            var venueInsertQuery = "INSERT INTO Venue (Name, Address, Latitude, Longitude) VALUES (?, ?, ?, ?);";
         }
         // User selected (default)
         else {
-            var selectQuery = "SELECT * FROM User WHERE Email = ?;";
+            var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO User (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
         }
 
@@ -162,7 +202,7 @@ router.post('/register', function (req, res, next) {
                 if (newUser.type == "manager") {
                     var promises = [
                         getPromise(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname]),
-                        getPromise(venueInsertQuery, [newUser.venuename, newUser.address]),
+                        getPromise(venueInsertQuery, [newUser.venuename, newUser.address, await getLat(fulladdress), await getLong(fulladdress)]),
                         getPromise(selectQuery, [newUser.email])
                     ];
                 } else {
@@ -178,7 +218,7 @@ router.post('/register', function (req, res, next) {
         }
 
         // Checks if email already exists
-        connection.query(selectQuery, [newUser.email], async function (err, rows, fields) {
+        connection.query(selectQuery, [newUser.email, newUser.email, newUser.email], async function (err, rows, fields) {
             if (err) {
                 console.log("Error at connection.query(select)\n" + err);
                 res.sendStatus(500);
@@ -199,7 +239,7 @@ router.post('/register', function (req, res, next) {
                 else {
                     req.session.verified = 1;
                     req.session.userid = result[1][0].UserID;
-                    res.redirect('/dashboard/profile');
+                    res.redirect('/profile');
                 }
             }
             // Email already exists, redirect to /login
@@ -216,162 +256,20 @@ router.post('/register', function (req, res, next) {
  * Users should be able to see current hotspots on a map.
  */
 router.get('/hotspots', function (req, res) {
-    return res.sendFile('hotspots.html', { root: 'views' });
-});
-
-/*
- * GET dashboard page
- * Logged-in users should be able to view all accessible routes.
- */
-router.get('/dashboard', function (req, res) {
-    return res.sendFile('dashboard.html', { root: 'views' });
-});
-
-/*
- * GET/POST check-in page
- * Logged-in users should be able to check-in by enter a code or scanning a QR code.
- */
-router.get('/dashboard/check-in', function (req, res) {
-    return res.sendFile('check-in.html', { root: 'views' });
-});
-
-router.post('/dashboard/check-in', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET check-in history page
- * Logged-in users should be able to see their check-in history on a map.
- */
-router.get('/dashboard/check-in-history', function (req, res) {
-    return res.sendFile('history.html', { root: 'views' });
-});
-
-/*
- * GET alerts page
- * Logged-in users should be able to see if they have been to a hotspot.
- */
-router.get('/dashboard/alerts', function (req, res) {
-    return res.sendFile('alerts.html', { root: 'views' });
+    return res.render('hotspots.ejs', { params: { verified: req.session.verified } });
+    //return res.sendFile('hotspots.html', { root: 'views' });
 });
 
 /*
  * GET/POST profile page
  * Logged-in users should be able to view and edit their user information.
  */
-router.get('/dashboard/profile', function (req, res) {
-    return res.sendFile('profile.html', { root: 'views' });
+router.get('/profile', function (req, res) {
+    return res.render('profile.ejs', { params: { verified: req.session.verified } });
+    //return res.sendFile('profile.html', { root: 'views' });
 });
 
-router.post('/dashboard/profile', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET/POST venue page
- * Managers should be able to view and edit their venue information.
- */
-router.get('/venue', function (req, res) {
-    return res.sendFile('venue.html', { root: 'views' });
-});
-
-router.post('/venue', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET venue QR code page
- * Managers should be able to generate and view a QR code page for their venue.
- */
-router.get('/venue/qr-code', function (req, res) {
-    return res.sendFile('qr-code.html', { root: 'views' });
-});
-
-/*
- * GET/POST admin login page
- * Admins should be able to log in to their account.
- */
-router.get('/admin-login', function (req, res) {
-    return res.sendFile('admin-login.html', { root: 'views' });
-});
-
-router.post('/admin-login', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET admin dashboard page
- * Admins should be able to view all accessible routes.
- */
-router.get('/admin', function (req, res) {
-    return res.sendFile('admin.html', { root: 'views' });
-});
-
-/*
- * GET/POST admin register page
- * Admins should be able to sign up other admins.
- */
-router.get('/admin/register', function (req, res) {
-    return res.sendFile('admin-register.html', { root: 'views' });
-});
-
-router.post('/admin/register', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET/POST admin profile page
- * Logged-in admins should be able to view and edit their user information.
- */
-router.get('/admin/profile', function (req, res) {
-    return res.sendFile('admin-profile.html', { root: 'views' });
-});
-
-router.post('/admin/profile', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET/POST admin hotspot management page
- * Admins should be able to manage hotspots.
- */
-router.get('/admin/hotspots', function (req, res) {
-    return res.sendFile('admin-hotspots.html', { root: 'views' });
-});
-
-router.post('/admin/hotspots', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET/POST admin user management page
- * Admins should be able to manage users.
- */
-router.get('/admin/users', function (req, res) {
-    return res.sendFile('admin-users.html', { root: 'views' });
-});
-
-router.post('/admin/users', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
-});
-
-/*
- * GET/POST admin venue management page
- * Admins should be able to manage venues.
- */
-router.get('/admin/venues', function (req, res) {
-    return res.sendFile('admin-venues.html', { root: 'views' });
-});
-
-router.post('/admin/venues', function (req, res) {
+router.post('/profile', function (req, res) {
     // TODO: Implement server-side
     return res.send("Success");
 });

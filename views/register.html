@@ -6,9 +6,9 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="stylesheets/style.css">
         <link rel="stylesheet" href="fontawesome/css/all.css">
-
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-        <script src="javascripts/login.js" defer></script>
+        <script src="javascripts/register.js" defer></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
 
     <body id="login-body">
@@ -21,43 +21,44 @@
                     <p>Create your COVIDTrace account</p>
                 </div>
 
-                    <div  class="login-input">
-                        <form class="login-form" method="POST" action='/register' >
+                <div class="login-input">
+                    <form class="login-form" method="POST" action='/register' >
 
-                            <div>
-                                <!-- TODO: Change wording for "normal user" --->
-                                <input class="registerradio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="vuerego.venueregotf = true;"> This is a normal user account.</input><br>
-                                <input class="registerradio" type="radio" id="managerbutton" name="type"value="manager" required onclick="vuerego.venueregotf = false;"> This is a venue management account.</input>
-                            </div>
+                        <div class="register-switcher">
+                            <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="vuerego.venueregotf = true;">
+                                <label class="form-input-left register-label" for="userbutton">Personal Account</label>
+                            </input>
+                            <input class="register-radio" type="radio" id="managerbutton" name="type"value="manager" required onclick="vuerego.venueregotf = false;">
+                                <label class="form-input-right register-label" for="managerbutton">Manager Account</label>
+                            </input>
+                        </div>
 
-                            <div>
-                                <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" required/>
-                                <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" required/>
-                            </div>
-                            <div>
-                                <input class="form-input" type="email" id="username" name="email" placeholder="Email" required/>
-                            </div>
+                        <div>
+                            <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" required/>
+                            <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" required/>
+                        </div>
+                        <div>
+                            <input class="form-input" type="email" id="username" name="email" placeholder="Email" required/>
+                        </div>
 
-                            <div id="venueRego" v-bind:class="{ 'venueregister' : venueregotf}">
-                                <hr>
-                                <input class="form-input" type="text" id="venuename" name="venuename" placeholder="Venue Name" /> <!--TODO: Make these two fields required when selected and not required when not --->
-                                <input class="form-input" type="text" id="address" name="address" placeholder="Address" />
-                                <input class="form-input" type="text" id="suburb" name="suburb" placeholder="Suburb" />
-                                <hr>
-                            </div>
+                        <div id="venueRego" v-bind:class="{ 'venueregister' : venueregotf}">
+                            <input class="form-input" type="text" id="venuename" name="venuename" placeholder="Venue Name" /> <!--TODO: Make these two fields required when selected and not required when not --->
+                            <input class="form-input" type="text" id="address" name="address" placeholder="Venue Address" />
+                            <input class="form-input" type="text" id="suburb" name="suburb" placeholder="Venue Suburb" />
+                        </div>
 
-                            <div>
-                                <input class="form-input" type="password" id="password" name="password"  placeholder="Password" required/>
-                            </div>
-                            <div>
-                                <input class="form-input" type="password" id="confirmpassword" name="confirmpassword"  placeholder="Confirm Password" oninput=matching(this) required/>
-                            </div>
+                        <div>
+                            <input class="form-input" type="password" id="password" name="password"  placeholder="Password" required/>
+                        </div>
+                        <div>
+                            <input class="form-input" type="password" id="confirmpassword" name="confirmpassword"  placeholder="Confirm Password" oninput=matching(this) required/>
+                        </div>
 
-                            <div>
-                                <button class="form-submit form-register" type="submit" ><span>Register</span></button>
-                            </div>
-                        </form>
-                    </div>
+                        <div>
+                            <button class="form-submit form-register" type="submit" ><span>Register</span></button>
+                        </div>
+                    </form>
+                </div>
 
                 <div class="login-input">
                     <hr />

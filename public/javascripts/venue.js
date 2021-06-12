@@ -25,13 +25,13 @@ var vueinst = new Vue({
     el: '#content',
     data() {
         return {
-            user: null,
+            venue: null,
             checkIn: null
         }
     },
     async mounted() {
-        var profile = await sendAJAX("/api/profile");
-        this.user = profile[0];
+        var profile = await sendAJAX("/api/venue");
+        this.venue = profile[0];
         var checkIn = await sendAJAX("/api/check-in");
         for (entry in checkIn[0]) {
             const oldStamp = checkIn[0][entry].Date

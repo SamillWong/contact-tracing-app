@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css?family=Roboto:300');
 
 /*
@@ -349,13 +350,13 @@ body {
     background-color: white;
     display: block;
     width: 350px;
-    margin-top: 10%;
+    margin-top: 5%;
     text-align: center;
     padding: 45px;
     box-shadow: rgb(0 0 0 / 10%) 0px 0px 10px;
 }
 
-.login-form input[type=text], input[type=password] {
+.login-form input[type=text], input[type=email], input[type=password] {
     background-color: white;
     border-style: solid;
     border-color: #dfe1e6;
@@ -364,11 +365,11 @@ body {
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.login-form input[type=text]:hover, input[type=password]:hover {
+.login-form input[type=text]:hover, input[type=email]:hover, input[type=password]:hover {
     background-color: whitesmoke;
 }
 
-.login-form input[type=text]:focus, input[type=password]:focus {
+.login-form input[type=text]:focus, input[type=email]:focus, input[type=password]:focus {
     background-color: white;
     border-color: #4c9aff;
 }
@@ -382,14 +383,14 @@ body {
     padding: 15px;
     margin-bottom: 15px;
     width: 315px;
-    height: 15px;
+    height: 8px;
 }
 
 .form-input-half {
     padding: 15px;
     margin-bottom: 15px;
     width: 135px;
-    height: 15px;
+    height: 8px;
 }
 
 .form-input-left {
@@ -423,6 +424,51 @@ body {
     border-color: #0065ff;
 }
 
+.register-switcher {
+    width: 350px;
+    height: 45px;
+}
+
+.register-radio {
+    background-color: #3a3d4a;
+    color: #ffffff;
+    visibility: hidden;
+    border-color: #0052cc;
+    border-radius: 3px;
+    border-style: solid;
+    height: 0;
+    width: 0;
+}
+
+.register-label {
+    padding: 15px;
+    margin-bottom: 15px;
+    width: 135px;
+    height: 15px;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+    background-color: #454545;
+    color: white;
+    transition: all 0.15s ease-out;
+}
+
+.register-radio:hover + .register-label {
+    background-color: #0065ff;
+}
+
+.register-radio:checked + .register-label {
+    background-color: #0052cc;
+}
+
+.register-radio:hover:checked + .register-label {
+    background-color: #0065ff;
+}
+
+#venueRego.venueregister {
+    display:none;
+}
+
 /* FOOTER */
 
 .footer {
@@ -443,6 +489,7 @@ body {
 .footer-left a {
     color: #0052cc;
     text-decoration: none;
+
 }
 
 .fill-page {
@@ -451,9 +498,4 @@ body {
 
 .indented p {
     padding-left:3em;
-}
-
-
-#venueRego.venueregister {
-    display:none;
 }

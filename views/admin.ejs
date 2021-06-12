@@ -2,7 +2,7 @@
 <html lang="en">
 
     <head>
-        <title>Profile - COVIDTrace</title>
+        <title>Health Official - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
@@ -17,14 +17,24 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
-                    <a href="/register" class="header-right">Register</a>
-                    <a href="/login" class="header-right">Login</a>
-                    <a href="/dashboard/profile" class="header-right">Profile</a>
-                    <a href="/dashboard/check-in">Check-in</a>
-                    <a href="/dashboard/alerts">View Alerts</a>
+                    <% if (params.verified > 0) { %>
+                        <a href="/logout" class="header-right">Logout</a>
+                        <a href="/profile" class="header-right">Profile</a>
+                    <% } else { %>
+                        <a href="/register" class="header-right">Register</a>
+                        <a href="/login" class="header-right">Login</a>
+                    <% } %>
+                    <% if (params.verified == 1) { %>
+                        <a href="/dashboard/check-in">Check-in</a>
+                        <a href="/dashboard/alerts">View Alerts</a>
+                    <% } %>
                     <a href="/hotspots">View Hotspots</a>
-                    <a href="/venue">Manage Venue</a>
-                    <a href="/admin" class="header-right-hidden">Health Official Portal</a>
+                    <% if (params.verified == 2) { %>
+                        <a href="/venue">Manage Venue</a>
+                    <% } %>
+                    <% if (params.verified == 3) { %>
+                        <a href="/admin" class="header-right">Health Official</a>
+                    <% } %>
                 </header>
 
                 <div class="breadcrumb-div">
@@ -48,7 +58,7 @@
 
             <div style = "width:100%;">
                 <div style = "float:left;width:50%;height:400px;margin-left:22%;margin-right:-22%;margin-bottom:-100px">
-                    <form class="login-form" autocomplete="off" method="POST">
+                    <form class="login-form" autocomplete="off" method="POST" >
 
                             <p>User search</p>
                             <input class = "form-input" id = "health-official-input" type ="text" placeholder = "User..">
