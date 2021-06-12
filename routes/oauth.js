@@ -1,4 +1,3 @@
-// TODO: Merge router file with index.js
 var express = require('express');
 var router = express.Router();
 
@@ -34,16 +33,11 @@ router.post('/token', function (req, res, next) {
         async function verify() {
             const ticket = await client.verifyIdToken({
                 idToken: req.body.token,
-                audience: process.env.CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
-                // Or, if multiple clients access the backend:
-                //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+                audience: process.env.CLIENT_ID
             });
             const payload = ticket.getPayload();
             req.session.user = payload['email'];
             res.send(req.session.user);
-
-            // If request specified a G Suite domain:
-            // const domain = payload['hd'];
         }
         verify().catch(function () { res.sendStatus(401); });
     }
@@ -88,7 +82,7 @@ router.post('/verify', function (req, res, next) {
         // Loop through each account type and compare password hash
         for (let i = 0; i < 3; i++) {
             if (result[i].length) {
-                req.session.verified = i+1;
+                req.session.verified = i + 1;
                 switch (i) {
                     case 0: req.session.userid = result[i][0].UserID; break;
                     case 1: req.session.managerid = result[i][0].ManagerID; break;

@@ -65,6 +65,50 @@ router.post('/check-in', function (req, res) {
     });
 });
 
+router.get('/check-in/:code', function (req, res) {
+
+    var receivedcode = req.params.code;
+
+    req.pool.getConnection(function (err, connection) {
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        //Verify that the Checkin code matches an existing venue.
+        var verifyvenueQuery = "SELECT * FROM Venue WHERE VenueID = ?;";
+
+        connection.query(verifyvenueQuery, [receivedcode], async function (err, rows, fields) {
+            if (err) {
+                console.log("Error at req.pool.getConnection\n" + err);
+                res.sendStatus(500);
+                return;
+            }
+
+            // Venue does not exist, send error response.
+            if (rows.length == 0) {
+                connection.release();
+                res.redirect('/dashboard/check-in');
+            }
+            // Venue exists, create a new check-in entry.
+            else {
+                var insertCheckIn = "INSERT INTO CheckIn (VenueID, UserID) VALUES (?, ?);";
+
+                connection.query(insertCheckIn, [receivedcode, req.session.userid], async function (err, rows, fields) {
+                    connection.release();
+                    if (err) {
+                        console.log("Error at insertCheckIn query\n" + err);
+                        res.sendStatus(500);
+                        return;
+                    }
+                    res.redirect('/profile');
+                });
+            }
+        })
+    });
+});
+
 /*
  * GET check-in history page
  * Logged-in users should be able to see their check-in history on a map.

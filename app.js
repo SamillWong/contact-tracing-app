@@ -44,7 +44,13 @@ dbConnectionPool.getConnection(function (err, connection) {
 
 app.use(function (req, res, next) {
     req.pool = dbConnectionPool;
-    next();
+    // Remove trailing slashes
+    if (req.path.substr(-1) == '/' && req.path.length > 1) {
+        var query = req.url.slice(req.path.length);
+        res.redirect(301, req.path.slice(0, -1) + query);
+    } else {
+        next();
+    }
 });
 
 // view engine setup
@@ -126,7 +132,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error.ejs', {params: {verified: req.session.verified}});
+    res.render('error.ejs', { params: { verified: req.session.verified } });
 });
 
 module.exports = app;

@@ -2,13 +2,13 @@
 <html lang="en">
 
     <head>
-        <title>Profile - COVIDTrace</title>
+        <title>Venue QR Code - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
         <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-        <script src="../javascripts/profile.js" defer></script>
+        <script src="../javascripts/venue.js" defer></script>
     </head>
 
     <body>
@@ -35,7 +35,7 @@
                         <a href="/venue">Manage Venue</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official</a>
+                        <a href="/admin" class="header-right">Health Official Portal</a>
                     <% } %>
                 </header>
 
@@ -45,60 +45,22 @@
                             <a href="/">Home</a>
                             <span class="breadcrumb-divider">/</span>
                         </li>
-                        <li>Profile</li>
+                        <li>
+                            <a href="/venue">Venue Management</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>QR Code</li>
                     </ul>
                 </div>
 
                 <div class="title-div">
-                    <h2>Profile</h2>
-                    <p>View and edit information about your COVIDTrace account</p>
+                    <h2>QR Code</h2>
+                    <p>View the check-in QR code for your venue</p>
                 </div>
 
                 <div class="info-div">
-                    <p>
-                        <b>Name: </b>{{ user.FirstName }} {{ user.LastName }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Email: </b>{{ user.Email }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Address: </b>{{ user.Address }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Contact number: </b>{{ user.ContactNumber }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
+                    <img class="venue-qr-code" src="<%= params.qrcode %>">
                 </div>
-
-                <% if (params.verified == 1) { %>
-                    <div class="venue-table-div">
-                        <table class="venue-table">
-                            <tr>
-                                <th>Check-in ID</th>
-                                <th>Timestamp</th>
-                                <th>Venue Name</th>
-                                <th>Venue Address</th>
-                            </tr>
-                            <tr v-for="(entry,i) in checkIn" :key="i">
-                                <td>{{ entry.CheckInID }}</td>
-                                <td>{{ entry.Date }}</td>
-                                <td>{{ entry.Name }}</td>
-                                <td>{{ entry.Address }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                <% } %>
 
             </div>
 

@@ -291,6 +291,13 @@ body {
     padding: 8px;
 }
 
+.venue-qr-code {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 45%;
+}
+
 /* LOGIN ELEMENTS */
 
 .login-page {
@@ -498,4 +505,23 @@ body {
 
 .indented p {
     padding-left:3em;
+}
+
+/* SEARCH */
+
+#Search .form-submit{
+    width:265px;
+    height:45px;
+}
+
+#Search .form-input{
+    width:975px;
+}
+
+#Search .UserSearchOFF{
+    display:none;
+}
+
+#Search .VenueSearchOFF{
+    display:none;
 }

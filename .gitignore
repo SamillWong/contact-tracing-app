@@ -3,7 +3,7 @@
 ### NODE ###
 
 # Environmental variables
-.env
+.env*
 
 # Logs
 logs
