@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>COVIDTrace - The contact tracing standard</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+        <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="javascripts/login.js" defer></script>
+    </head>
+
+    <body>
+
+        <video autoplay muted loop class="background-video-index">
+            <source src="media/background.mp4" type="video/mp4">
+        </video>
+
+        <header class="header-index">
+            <a href="/"><b>COVIDTrace</b></a>
+            <% if (params.verified > 0) { %>
+                <a href="/logout" class="header-right">Logout</a>
+                <a href="/profile" class="header-right">Profile</a>
+            <% } else { %>
+                <a href="/register" class="header-right">Register</a>
+                <a href="/login" class="header-right">Login</a>
+            <% } %>
+            <% if (params.verified == 1) { %>
+                <a href="/dashboard/check-in">Check-in</a>
+                <a href="/dashboard/alerts">View Alerts</a>
+            <% } %>
+            <a href="/hotspots">View Hotspots</a>
+            <% if (params.verified == 2) { %>
+                <a href="/venue">Manage Venue</a>
+            <% } %>
+            <% if (params.verified == 3) { %>
+                <a href="/admin" class="header-right">Health Official</a>
+            <% } %>
+        </header>
+
+        <div class="flex-container">
+
+            <div class="index-title-div">
+                <h1 class="index-title">
+                    Welcome to COVIDTrace,<br />
+                    the leading contact tracing system.
+                </h1>
+                <p class="index-subtitle">
+                    Keep you and those around you safe,<br />
+                    with instant alert features.
+                </p>
+            </div>
+
+            <% if (!params.verified > 0) { %>
+                <div class="index-form-div">
+                    <div class="index-login-block">
+
+                        <div class="login-header">
+                            <h3>Get started</h3>
+                            <p>Create your COVIDTrace account</p>
+                        </div>
+
+                        <div class="login-input">
+                            <form class="login-form" method="POST" action='/register' >
+
+                                <div class="register-switcher">
+                                    <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="vuerego.venueregotf = true;">
+                                        <label class="form-input-left register-label" for="userbutton">Personal Account</label>
+                                    </input>
+                                    <input class="register-radio" type="radio" id="managerbutton" name="type"value="manager" required onclick="vuerego.venueregotf = false;">
+                                        <label class="form-input-right register-label" for="managerbutton">Manager Account</label>
+                                    </input>
+                                </div>
+
+                                <div>
+                                    <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" required/>
+                                    <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" required/>
+                                </div>
+                                <div>
+                                    <input class="form-input" type="email" id="username" name="email" placeholder="Email" required/>
+                                </div>
+
+                                <div id="venueRego" v-bind:class="{ 'venueregister' : venueregotf}">
+                                    <input class="form-input" type="text" id="venuename" name="venuename" placeholder="Venue Name" /> <!--TODO: Make these two fields required when selected and not required when not --->
+                                    <input class="form-input" type="text" id="address" name="address" placeholder="Venue Address" />
+                                    <input class="form-input" type="text" id="suburb" name="suburb" placeholder="Venue Suburb" />
+                                </div>
+
+                                <div>
+                                    <input class="form-input" type="password" id="password" name="password"  placeholder="Password" required/>
+                                </div>
+                                <div>
+                                    <input class="form-input" type="password" id="confirmpassword" name="confirmpassword"  placeholder="Confirm Password" oninput=matching(this) required/>
+                                </div>
+
+                                <div>
+                                    <button class="form-submit form-register" type="submit" ><span>Register</span></button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+            <% } %>
+
+        </div>
+
+    </body>
+
+
+</html>

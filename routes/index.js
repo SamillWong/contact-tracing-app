@@ -4,7 +4,8 @@ var bcrypt = require('bcryptjs');
 
 /* GET home page */
 router.get('/', function (req, res) {
-    return res.sendFile('index.html', { root: 'views' });
+    return res.render('index.ejs', {params: {verified: req.session.verified}});
+    // return res.sendFile('index.html', { root: 'views' });
 });
 
 /*
@@ -22,11 +23,6 @@ router.post('/login', function (req, res, next) {
         email: req.body.email, // TODO: Make email case-insensitive
         password: req.body.password
     }
-
-    //Reset session details on login. TODO: Create a sign-out function that does this.
-    req.session.userid=null;
-    req.session.managerid=null;
-    req.session.healthofficalid=null;
 
     req.pool.getConnection(async function (err, connection) {
         if (err) {
@@ -65,19 +61,21 @@ router.post('/login', function (req, res, next) {
                 if (isMatch) {
                     req.session.verified = i + 1;
                     switch (i) {
-                        case 0: req.session.userid = result[i][0].UserID; break;
-                        case 1: req.session.managerid = result[i][0].ManagerID; break;
-                        case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
+                        case 0:
+                            req.session.userid = result[i][0].UserID;
+                            res.redirect('/profile');
+                            break;
+                        case 1:
+                            req.session.managerid = result[i][0].ManagerID;
+                            res.redirect('/venue');
+                            break;
+                        case 2:
+                            req.session.healthofficalid = result[i][0].HealthOfficialID;
+                            res.redirect('/admin');
+                            break;
+                        default:
+                            res.redirect('/login')
                     }
-                    //Redirect user to page relevant to their sign in.
-                    if (req.session.userid!= null){
-                        res.redirect('/dashboard/profile');
-                    } else if (req.session.managerid!= null){
-                        res.redirect('/venue');
-                    } else if (req.session.healthofficalid!= null){
-                        res.redirect('/admin');
-                    }
-
                 } else {
                     res.redirect("/login");
                 }
@@ -244,7 +242,7 @@ router.post('/register', function (req, res, next) {
                 else {
                     req.session.verified = 1;
                     req.session.userid = result[1][0].UserID;
-                    res.redirect('/dashboard/profile');
+                    res.redirect('/profile');
                 }
             }
             // Email already exists, redirect to /login
@@ -261,7 +259,8 @@ router.post('/register', function (req, res, next) {
  * Users should be able to see current hotspots on a map.
  */
 router.get('/hotspots', function (req, res) {
-    return res.sendFile('hotspots.html', { root: 'views' });
+    return res.render('hotspots.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('hotspots.html', { root: 'views' });
 });
 
 /*
@@ -269,7 +268,8 @@ router.get('/hotspots', function (req, res) {
  * Logged-in users should be able to view all accessible routes.
  */
 router.get('/dashboard', function (req, res) {
-    return res.sendFile('dashboard.html', { root: 'views' });
+    return res.render('dashboard.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('dashboard.html', { root: 'views' });
 });
 
 /*
@@ -277,14 +277,15 @@ router.get('/dashboard', function (req, res) {
  * Logged-in users should be able to check-in by enter a code or scanning a QR code.
  */
 router.get('/dashboard/check-in', function (req, res) {
-    return res.sendFile('check-in.html', { root: 'views' });
+    return res.render('check-in.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('check-in.html', { root: 'views' });
 });
 
 router.post('/dashboard/check-in', function (req, res) {
 
-    var receivedcode=req.body.checkincode;
+    var receivedcode = req.body.checkincode;
 
-    req.pool.getConnection(function (err, connection){
+    req.pool.getConnection(function (err, connection) {
         if (err) {
             console.log("Error at req.pool.getConnection\n" + err);
             res.sendStatus(500);
@@ -294,36 +295,30 @@ router.post('/dashboard/check-in', function (req, res) {
         //Verify that the Checkin code matches an existing venue.
         var verifyvenueQuery = "SELECT * FROM Venue WHERE VenueID = ?;";
 
-        connection.query(verifyvenueQuery, [receivedcode], async function (err, rows, fields){
+        connection.query(verifyvenueQuery, [receivedcode], async function (err, rows, fields) {
             if (err) {
                 console.log("Error at req.pool.getConnection\n" + err);
                 res.sendStatus(500);
                 return;
             }
 
-            if (rows.length==0){ //Venue does not exist send error.
+            // Venue does not exist, send error response.
+            if (rows.length == 0) {
                 connection.release();
                 res.redirect('/dashboard/check-in');
-            } else { //Venue does exist. Create Checkin entry.
-                var insertCheckIn= "INSERT INTO CheckIn (VenueID, Date, UserID) VALUES (?, ?, ?);";
+            }
+            // Venue exists, create a new check-in entry.
+            else {
+                var insertCheckIn = "INSERT INTO CheckIn (VenueID, UserID) VALUES (?, ?);";
 
-                var timecalc= new Date();
-                var timeanddate="";
-                timeanddate+=timecalc.toLocaleDateString();
-                timeanddate+=" " + timecalc.toLocaleTimeString(); //TODO: For some reason this is giving GMT time despite it being localeString. Unsure of solution. May be different per system. Can just accept GMT and remove "+0930" 1 line down
-                timeanddate+=" GMT+0930" //Time and Data finalised here. Format:  6/11/2021 10:47:21 AM GMT+0930
-
-                //console.log(timeanddate);
-
-                connection.query(insertCheckIn, [receivedcode, timeanddate, req.session.userid], async function (err, rows, fields){
+                connection.query(insertCheckIn, [receivedcode, req.session.userid], async function (err, rows, fields) {
                     connection.release();
                     if (err) {
                         console.log("Error at insertCheckIn query\n" + err);
                         res.sendStatus(500);
                         return;
-                    } else {
-                        res.redirect('/dashboard/profile');
                     }
+                    res.redirect('/profile');
                 });
             }
         })
@@ -343,18 +338,20 @@ router.get('/dashboard/check-in-history', function (req, res) {
  * Logged-in users should be able to see if they have been to a hotspot.
  */
 router.get('/dashboard/alerts', function (req, res) {
-    return res.sendFile('alerts.html', { root: 'views' });
+    return res.render('alerts.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('alerts.html', { root: 'views' });
 });
 
 /*
  * GET/POST profile page
  * Logged-in users should be able to view and edit their user information.
  */
-router.get('/dashboard/profile', function (req, res) {
-    return res.sendFile('profile.html', { root: 'views' });
+router.get('/profile', function (req, res) {
+    return res.render('profile.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('profile.html', { root: 'views' });
 });
 
-router.post('/dashboard/profile', function (req, res) {
+router.post('/profile', function (req, res) {
     // TODO: Implement server-side
     return res.send("Success");
 });
@@ -364,7 +361,8 @@ router.post('/dashboard/profile', function (req, res) {
  * Managers should be able to view and edit their venue information.
  */
 router.get('/venue', function (req, res) {
-    return res.sendFile('venue.html', { root: 'views' });
+    return res.render('venue.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('venue.html', { root: 'views' });
 });
 
 router.post('/venue', function (req, res) {
@@ -398,7 +396,8 @@ router.post('/admin-login', function (req, res) {
  * Admins should be able to view all accessible routes.
  */
 router.get('/admin', function (req, res) {
-    return res.sendFile('admin.html', { root: 'views' });
+    return res.render('admin.ejs', {params: {verified: req.session.verified}});
+    //return res.sendFile('admin.html', { root: 'views' });
 });
 
 /*

@@ -46,7 +46,8 @@ app.use(function (req, res, next) {
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -61,6 +62,28 @@ app.use(session({
 }));
 
 // Session middleware
+app.get(['/login', '/register'], function (req, res, next) {
+    switch (req.session.verified) {
+        case 1: return res.redirect('/profile');
+        case 2: return res.redirect('/venue');
+        case 3: return res.redirect('/admin');
+    }
+    next();
+});
+
+app.post(['/login', '/register'], function (req, res, next) {
+    if (req.session.verified) return res.sendStatus(200);
+    next();
+});
+
+app.get('/profile*', function (req, res, next) {
+    if (req.session.verified > 0) {
+        next();
+    } else {
+        return res.redirect('/login');
+    }
+});
+
 app.get('/dashboard*', function (req, res, next) {
     if (req.session.verified == 1) {
         next();
@@ -97,7 +120,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.render('error.ejs', {params: {verified: req.session.verified}});
 });
 
 module.exports = app;
