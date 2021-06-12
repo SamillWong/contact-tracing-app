@@ -178,13 +178,13 @@ router.post('/register', function (req, res, next) {
 
         // Venue manager selected
         if (newUser.type == "manager") {
-            var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
+            var selectQuery = "SELECT Email FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
             var venueInsertQuery = "INSERT INTO Venue (Name, Address, Latitude, Longitude) VALUES (?, ?, ?, ?);";
         }
         // User selected (default)
         else {
-            var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
+            var selectQuery = "SELECT Email FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO User (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
         }
 
@@ -203,12 +203,12 @@ router.post('/register', function (req, res, next) {
                     var promises = [
                         getPromise(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname]),
                         getPromise(venueInsertQuery, [newUser.venuename, newUser.address, await getLat(fulladdress), await getLong(fulladdress)]),
-                        getPromise(selectQuery, [newUser.email])
+                        getPromise(selectQuery, [newUser.email, newUser.email, newUser.email])
                     ];
                 } else {
                     var promises = [
                         getPromise(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname]),
-                        getPromise(selectQuery, [newUser.email])
+                        getPromise(selectQuery, [newUser.email, newUser.email, newUser.email])
                     ];
                 }
                 return await Promise.all(promises);
