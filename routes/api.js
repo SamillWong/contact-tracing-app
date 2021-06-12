@@ -11,7 +11,7 @@ app.use(expressValidator());
 /* Endpoint for getting profile details */
 router.get('/profile', function (req, res, next) {
 
-    if (req.session.verified != 1) {
+    if (req.session.verified != 1 && req.session.verified != 2 && req.session.verified != 3) {
         return res.sendStatus(401);
     }
 
@@ -20,10 +20,10 @@ router.get('/profile', function (req, res, next) {
             res.sendStatus(500);
         }
 
-        // Query the database with UserID and return a Promise object
-        getPromise = (query) => {
+        // Query the database with account ID and return a Promise object
+        getPromise = (query, param) => {
             return new Promise((resolve, reject) => {
-                connection.query(query, [req.session.userid], function (err, rows, fields) {
+                connection.query(query, param, function (err, rows, fields) {
                     if (err) return reject(err);
                     return resolve(rows);
                 });
@@ -32,9 +32,22 @@ router.get('/profile', function (req, res, next) {
 
         // Construct rows from each query
         async function makeQuery() {
-            const userQuery = "SELECT User.FirstName, User.LastName, User.Email, User.Address, User.ContactNumber FROM User WHERE UserID = ?;";
+            switch (req.session.verified) {
+                case 1:
+                    var profileQuery = "SELECT FirstName, LastName, Email, Address, ContactNumber FROM User WHERE UserID = ?;";
+                    var accountid = req.session.userid;
+                    break;
+                case 2:
+                    var profileQuery = "SELECT FirstName, LastName, Email, Address, ContactNumber FROM VenueManager WHERE ManagerID = ?;";
+                    var accountid = req.session.managerid;
+                    break;
+                case 3:
+                    var profileQuery = "SELECT FirstName, LastName, Email, Address, ContactNumber FROM HealthOfficial WHERE HealthOfficialID = ?;";
+                    var accountid = req.session.healthofficialid;
+                    break;
+            }
             try {
-                const promises = [getPromise(userQuery)];
+                const promises = [getPromise(profileQuery, [accountid])];
                 return await Promise.all(promises);
             } catch (err) {
                 console.log(err);
@@ -50,7 +63,55 @@ router.get('/profile', function (req, res, next) {
 /* Endpoint for getting check-in entries */
 router.get('/check-in', function (req, res, next) {
 
-    if (req.session.verified != 1) {
+    if (req.session.verified != 1 && req.session.verified != 2) {
+        return res.sendStatus(401);
+    }
+
+    req.pool.getConnection(async function (err, connection) {
+        if (err) {
+            res.sendStatus(500);
+        }
+
+        // Query the database with account ID and return a Promise object
+        getPromise = (query, param) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, param, function (err, rows, fields) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                });
+            });
+        }
+
+        // Construct rows from each query
+        async function makeQuery() {
+            switch (req.session.verified) {
+                case 1:
+                    var checkInQuery = "SELECT CheckIn.CheckInID, CheckIn.Date, Venue.Name, Venue.Address FROM CheckIn INNER JOIN Venue ON Venue.VenueID=CheckIn.VenueID WHERE CheckIn.UserID = ? ORDER BY CheckIn.CheckInID;";
+                    var accountid = req.session.userid;
+                    break;
+                case 2:
+                    var checkInQuery = "SELECT CheckIn.CheckInID, CheckIn.Date, User.FirstName, User.LastName FROM CheckIn INNER JOIN User ON CheckIn.UserID = User.UserID WHERE CheckIn.VenueID = ? ORDER BY CheckIn.CheckInID;";
+                    var accountid = req.session.managerid;
+                    break;
+            }
+            try {
+                const promises = [getPromise(checkInQuery, accountid)];
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        var result = await makeQuery();
+        connection.release();
+
+        res.send(JSON.stringify(result[0]));
+    });
+});
+
+/* Endpoint for getting venue profile details */
+router.get('/venue', function (req, res, next) {
+
+    if (req.session.verified != 2) {
         return res.sendStatus(401);
     }
 
@@ -62,7 +123,7 @@ router.get('/check-in', function (req, res, next) {
         // Query the database with provided email address and return a Promise object
         getPromise = (query) => {
             return new Promise((resolve, reject) => {
-                connection.query(query, [req.session.userid], function (err, rows, fields) {
+                connection.query(query, [req.session.managerid], function (err, rows, fields) {
                     if (err) return reject(err);
                     return resolve(rows);
                 });
@@ -71,9 +132,9 @@ router.get('/check-in', function (req, res, next) {
 
         // Construct rows from each query
         async function makeQuery() {
-            const query = "SELECT CheckIn.CheckInID, CheckIn.Date, Venue.Name, Venue.Address FROM CheckIn INNER JOIN Venue ON Venue.VenueID=CheckIn.VenueID WHERE CheckIn.UserID = ? ORDER BY CheckIn.CheckInID;";
+            const venueQuery = "SELECT Venue.Name, Venue.Address, VenueManager.FirstName, VenueManager.LastName FROM Venue INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID WHERE ManagerID = ?;";
             try {
-                const promises = [getPromise(query)];
+                const promises = [getPromise(venueQuery)];
                 return await Promise.all(promises);
             } catch (err) {
                 console.log(err);
@@ -82,7 +143,7 @@ router.get('/check-in', function (req, res, next) {
         var result = await makeQuery();
         connection.release();
 
-        res.send(JSON.stringify(result[0]));
+        res.send(JSON.stringify(result[0][0]));
     });
 });
 
