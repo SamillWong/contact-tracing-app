@@ -106,6 +106,39 @@ router.get('/register', function (req, res) {
     return res.sendFile('register.html', { root: 'views' });
 });
 
+
+const axios = require('axios');
+//Lat Long Functions. Can Probably be put into one function but everything I tried broke it so its good enough for me.
+async function getLat(givenaddress) {
+        try {
+            const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+                params: { address: givenaddress,
+                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+            }
+            });
+            var newLatitude=response.data.results[0].geometry.location.lat;
+            return await newLatitude;
+        } catch(error){
+            console.log(error);
+        }
+    }
+
+async function getLong(givenaddress) {
+        try {
+            const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+                params: { address: givenaddress,
+                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+            }
+            });
+            var newLongitude=response.data.results[0].geometry.location.lng;
+            return await newLongitude;
+        } catch(error){
+            console.log(error);
+        }
+    }
+
+
+
 // Account registration
 router.post('/register', function (req, res, next) {
 
@@ -126,20 +159,19 @@ router.post('/register', function (req, res, next) {
     const hash = bcrypt.hashSync(newUser.password, salt);
     newUser.password = hash;
 
-    // Longitude and Latitude calculations
+    // Longitude and Latitude calculations address details
     var splitaddress = newUser.address.split(" ");
     var addresslength = splitaddress.length
-    var geocodequery = "/https://maps.googleapis.com/maps/api/geocode/json?address="
+    var fulladdress="";
 
     for (let i = 0; i < addresslength; i++) {
-        geocodequery += splitaddress[i];
-        geocodequery += '+'
+        fulladdress += splitaddress[i];
+        fulladdress += '+'
     }
+    fulladdress += ",+" + newUser.suburb + ",+SA";
 
-    // Complete geocode query
-    geocodequery += ",+" + newUser.suburb + ",+SA&key=AIzaSyD0Rnjk-r6Ezi8olChd6eQfpVAgrPh6NXE";
-    //console.log(geocodequery);
 
+    //Query database and insert if neccessary.
     req.pool.getConnection(function (err, connection) {
 
         if (err) {
@@ -153,7 +185,7 @@ router.post('/register', function (req, res, next) {
             var selectQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
             // TODO: Placeholders at (1, 1). Will be replaced with longitude and latitude.
-            var venueInsertQuery = "INSERT INTO Venue (Name, Address, Longitude, Latitude) VALUES (?, ?, 1, 1);";
+            var venueInsertQuery = "INSERT INTO Venue (Name, Address, Latitude, Longitude) VALUES (?, ?, ?, ?);";
         }
         // User selected (default)
         else {
@@ -175,7 +207,7 @@ router.post('/register', function (req, res, next) {
                 if (newUser.type == "manager") {
                     var promises = [
                         getPromise(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname]),
-                        getPromise(venueInsertQuery, [newUser.venuename, newUser.address]),
+                        getPromise(venueInsertQuery, [newUser.venuename, newUser.address, await getLat(fulladdress), await getLong(fulladdress)]),
                         getPromise(selectQuery, [newUser.email])
                     ];
                 } else {
