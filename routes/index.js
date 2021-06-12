@@ -178,13 +178,13 @@ router.post('/register', function (req, res, next) {
 
         // Venue manager selected
         if (newUser.type == "manager") {
-            var selectQuery = "SELECT Email FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
+            var selectQuery = "SELECT ManagerID FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
             var venueInsertQuery = "INSERT INTO Venue (Name, Address, Latitude, Longitude) VALUES (?, ?, ?, ?);";
         }
         // User selected (default)
         else {
-            var selectQuery = "SELECT Email FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
+            var selectQuery = "SELECT UserID FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO User (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
         }
 
@@ -238,6 +238,7 @@ router.post('/register', function (req, res, next) {
                 // Account belongs to a user, redirect to profile page
                 else {
                     req.session.verified = 1;
+                    console.log(result[1][0].UserID);
                     req.session.userid = result[1][0].UserID;
                     res.redirect('/profile');
                 }
