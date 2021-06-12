@@ -9,7 +9,10 @@ var bodyParser = require('body-parser');
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var dashboardRouter = require('./routes/dashboard')
+var oauthRouter = require('./routes/oauth');
+var venueRouter = require('./routes/venue');
+var adminRouter = require('./routes/admin');
 var apiRouter = require('./routes/api');
 var debugRouter = require('./routes/debug');
 
@@ -103,7 +106,10 @@ app.get('/venue*', function (req, res, next) {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/dashboard', dashboardRouter);
+app.use('/oauth', oauthRouter);
+app.use('/venue', venueRouter);
+app.use('/admin', adminRouter);
 app.use('/api', apiRouter);
 app.use('/debug', debugRouter);
 
