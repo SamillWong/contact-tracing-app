@@ -178,13 +178,13 @@ router.post('/register', function (req, res, next) {
 
         // Venue manager selected
         if (newUser.type == "manager") {
-            var selectQuery = "SELECT * FROM VenueManager WHERE Email = ?;";
+            var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
             var venueInsertQuery = "INSERT INTO Venue (Name, Address, Latitude, Longitude) VALUES (?, ?, ?, ?);";
         }
         // User selected (default)
         else {
-            var selectQuery = "SELECT * FROM User WHERE Email = ?;";
+            var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO User (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
         }
 
@@ -218,7 +218,7 @@ router.post('/register', function (req, res, next) {
         }
 
         // Checks if email already exists
-        connection.query(selectQuery, [newUser.email], async function (err, rows, fields) {
+        connection.query(selectQuery, [newUser.email, newUser.email, newUser.email], async function (err, rows, fields) {
             if (err) {
                 console.log("Error at connection.query(select)\n" + err);
                 res.sendStatus(500);
