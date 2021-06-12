@@ -7,6 +7,8 @@
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
         <link rel="stylesheet" type="text/css" href="fontawesome/css/all.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="../javascripts/venue.js" defer></script>
     </head>
 
     <body>
@@ -19,7 +21,7 @@
                     <a href="/"><b>COVIDTrace</b></a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
-                        <a href="/dashboard/profile" class="header-right">Profile</a>
+                        <a href="/profile" class="header-right">Profile</a>
                     <% } else { %>
                         <a href="/register" class="header-right">Register</a>
                         <a href="/login" class="header-right">Login</a>
@@ -49,46 +51,24 @@
 
                 <div class="title-div">
                     <h2>Venue Management</h2>
-                    <p>View and edit information about venues that you manage</p>
-                </div>
-
-                <div class="venue-table-div">
-                    <table class="venue-table">
-                        <tr>
-                            <th>Venue ID</th>
-                            <th>Venue Name</th>
-                            <th colspan="2">Venue Address</th>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Woodville Pizza Bar</a></td>
-                            <td>1/58 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
-                            <td><a href="#" class="venue-button">Get QR Code</a></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><a href="#">Snap Fitness Woodville 24/7</a></td>
-                            <td>57 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
-                            <td><a href="#" class="venue-button">Get QR Code</a></td>
-                        </tr>
-                    </table>
+                    <p>View and edit information about your venue</p>
                 </div>
 
                 <div class="info-div">
                     <p>
-                        <b>Venue Name: </b>Woodville Pizza Bar
+                        <b>Venue Name: </b>{{ venue.Name }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Venue Address: </b>1/58 Woodville Rd, WOODVILLE SOUTH SA 5011
+                        <b>Venue Address: </b>{{ venue.Address }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
                     </p>
                     <p>
-                        <b>Venue Owner: </b>John Smith
+                        <b>Venue Owner: </b>{{ venue.FirstName }} {{ venue.LastName }}
                         <button class="edit-button" type="button">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -103,35 +83,11 @@
                             <th>First name</th>
                             <th>Last name</th>
                         </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>12 May 2021 14:03:29 GMT+09:30</td>
-                            <td>Aaron</td>
-                            <td>Landale</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>12 May 2021 17:04:04 GMT+09:30</td>
-                            <td>Hamish</td>
-                            <td>Watsford</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>12 May 2021 20:06:21 GMT+09:30</td>
-                            <td>Cameron</td>
-                            <td>Folingsby</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>13 May 2021 19:08:14 GMT+09:30</td>
-                            <td>Charlie</td>
-                            <td>Beardsmore</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>13 May 2021 22:13:42 GMT+09:30</td>
-                            <td>Harry</td>
-                            <td>Flinders</td>
+                        <tr v-for="(entry,i) in checkIn" :key="i">
+                            <td>{{ entry.CheckInID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.FirstName }}</td>
+                            <td>{{ entry.LastName }}</td>
                         </tr>
                     </table>
                 </div>
