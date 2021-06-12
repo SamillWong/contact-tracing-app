@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Health Official - Search - COVIDTrace</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+        <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
+        <script src="/../javascripts/search.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    </head>
+
+    <body>
+
+        <div id="page-container">
+
+            <div id="content">
+
+                <header class="header">
+                    <a href="/"><b>COVIDTrace</b></a>
+                    <% if (params.verified > 0) { %>
+                        <a href="/logout" class="header-right">Logout</a>
+                        <a href="/profile" class="header-right">Profile</a>
+                    <% } else { %>
+                        <a href="/register" class="header-right">Register</a>
+                        <a href="/login" class="header-right">Login</a>
+                    <% } %>
+                    <% if (params.verified == 1) { %>
+                        <a href="/dashboard/check-in">Check-in</a>
+                        <a href="/dashboard/alerts">View Alerts</a>
+                    <% } %>
+                    <a href="/hotspots">View Hotspots</a>
+                    <% if (params.verified == 2) { %>
+                        <a href="/venue">Manage Venue</a>
+                    <% } %>
+                    <% if (params.verified == 3) { %>
+                        <a href="/admin" class="header-right">Health Official</a>
+                    <% } %>
+                </header>
+
+                <div class="breadcrumb-div">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>
+                            <a href="/dashboard">Dashboard</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>
+                            <a href="/admin">Health Official</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>Search</li>
+                    </ul>
+                </div>
+
+
+                <div class="title-div">
+                    <h2>Health Official</h2>
+                    <p>Search for Users and Venues</p>
+                </div>
+
+                <div class="register-switcher" style="display:inline-block">
+                        <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="UserVis()">
+                            <label class="form-input-left register-label" for="userbutton">User Search</label>
+                        </input>
+                        <input class="register-radio" type="radio" id="managerbutton" name="type"value="manager" required onclick="VenueVis()">
+                            <label class="form-input-right register-label" for="managerbutton">Venue Search</label>
+                        </input>
+                </div>
+
+                <div id="Search">
+                    <div v-bind:class="{ 'UserSearchOFF' : UserSearch}">
+                        <div class="info-div" >
+                            <div id="usersearch">
+                                <form class="login-form" autocomplete="off" method="POST" action='/admin/users' >
+                                        <p>User Search</p>
+                                        <input class = "form-input" type="email" id="useremail" name="email" placeholder = "Enter User Email">
+                                        <button class="form-submit"  type="submit" value="login"><span>Search</span></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-bind:class="{ 'VenueSearchOFF' : VenueSearch}">
+                        <div class="info-div">
+                            <div id="venuesearch">
+                                <form class="login-form" autocomplete="off" method="POST" action='/admin/venues' >
+                                        <p>Venue Search</p>
+                                        <input class = "form-input" type="email" id="venueemail" name="email" placeholder = "Enter Venue Email">
+                                        <button class="form-submit" type="submit" value="login"><span>Search</span></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
