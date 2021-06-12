@@ -111,7 +111,7 @@ async function getLat(givenaddress) {
         const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
             params: {
                 address: givenaddress,
-                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+                key: process.env.MAP_API_KEY
             }
         });
         var newLatitude = response.data.results[0].geometry.location.lat;
@@ -126,7 +126,7 @@ async function getLong(givenaddress) {
         const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
             params: {
                 address: givenaddress,
-                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+                key: process.env.MAP_API_KEY
             }
         });
         var newLongitude = response.data.results[0].geometry.location.lng;
