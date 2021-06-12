@@ -15,9 +15,8 @@ var bcrypt = require('bcryptjs');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
-// TODO: Rename endpoint with appropriate name
 // Google OAuth2 login
-router.post('/login', function (req, res, next) {
+router.post('/token', function (req, res, next) {
 
     if ('user' in req.body) {
         if (req.body.user in users) {
@@ -50,9 +49,8 @@ router.post('/login', function (req, res, next) {
     }
 });
 
-// TODO: Rename endpoint to /auth
 // Google OAuth2 verify
-router.post('/login/verifyDB', function (req, res, next) {
+router.post('/verify', function (req, res, next) {
 
     req.pool.getConnection(async function (err, connection) {
         if (err) {
@@ -90,7 +88,7 @@ router.post('/login/verifyDB', function (req, res, next) {
         // Loop through each account type and compare password hash
         for (let i = 0; i < 3; i++) {
             if (result[i].length) {
-                req.session.verified = true;
+                req.session.verified = i+1;
                 switch (i) {
                     case 0: req.session.userid = result[i][0].UserID; break;
                     case 1: req.session.managerid = result[i][0].ManagerID; break;
