@@ -64,7 +64,7 @@ app.use(session({
 // Session middleware
 app.get(['/login', '/register'], function (req, res, next) {
     switch (req.session.verified) {
-        case 1: return res.redirect('/dashboard/profile');
+        case 1: return res.redirect('/profile');
         case 2: return res.redirect('/venue');
         case 3: return res.redirect('/admin');
     }
@@ -74,6 +74,14 @@ app.get(['/login', '/register'], function (req, res, next) {
 app.post(['/login', '/register'], function (req, res, next) {
     if (req.session.verified) return res.sendStatus(200);
     next();
+});
+
+app.get('/profile*', function (req, res, next) {
+    if (req.session.verified > 0) {
+        next();
+    } else {
+        return res.redirect('/login');
+    }
 });
 
 app.get('/dashboard*', function (req, res, next) {
