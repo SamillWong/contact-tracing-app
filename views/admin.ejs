@@ -58,10 +58,10 @@
 
             <div style = "width:100%;">
                 <div style = "float:left;width:50%;height:400px;margin-left:22%;margin-right:-22%;margin-bottom:-100px">
-                    <form class="login-form" autocomplete="off" method="POST">
+                    <form class="login-form" autocomplete="off" method="POST" >
 
                             <p>User search</p>
-                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "user..">
+                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "User..">
                             <button class="form-submit" id = "health-official-button" type="submit" value="login"><span>Search</span></button>
                     </form>
 
@@ -70,14 +70,14 @@
                     <form class="login-form" autocomplete="offs" method="POST">
 
                             <p>Venue search</p>
-                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "venue..">
+                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "Venue..">
                             <button class="form-submit" id = "health-official-button" type="submit" value="login"><span>Search</span></button>
                     </form>
 
                     <form class="login-form" autocomplete="offs" method="POST">
 
                             <p>Add Hotspot</p>
-                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "address..">
+                            <input class = "form-input" id = "health-official-input" type ="text" placeholder = "Address..">
                             <button class="form-submit" id = "health-official-button" type="submit" value="login"><span>Add</span></button>
                     </form>
                 </div>
@@ -90,13 +90,13 @@
                         </div>
 
                         <div class="login-input">
-                            <form class="login-form" method="POST">
+                            <form class="login-form" method="POST" action='/admin/register'>
                                 <div style = "height:50px;float:left;width:50%">
                                     <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" style = "padding:10px;margin-right:10px"/>
                                     <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" style = "padding:10px;margin-left:10px;float:left;"/>
                                 </div>
                                 <div>
-                                    <input class="form-input" type="text" id="username" name="username" placeholder="Email" style = "padding: 10px;"/>
+                                    <input class="form-input" type="email" id="email" name="email" placeholder="Email" style = "padding: 10px;"/>
                                 </div>
 
                                 <div>
