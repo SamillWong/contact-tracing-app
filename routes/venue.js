@@ -10,7 +10,6 @@ var qrcode = require('qrcode');
  */
 router.get('/', function (req, res) {
     return res.render('venue.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('venue.html', { root: 'views' });
 });
 
 router.post('/', function (req, res) {
@@ -37,7 +36,6 @@ router.get('/qr-code', async function (req, res) {
             qrcode: data
         }
     });
-    //return res.sendFile('qr-code.html', { root: 'views' });
 });
 
 module.exports = router;

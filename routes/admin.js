@@ -9,7 +9,6 @@ var axios = require('axios');
  */
 router.get('/', function (req, res) {
     return res.render('admin.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('admin.html', { root: 'views' });
 });
 
 /*
@@ -30,14 +29,14 @@ router.post('/register', function (req, res) {
         password: req.body.password,
         type: req.body.type
     };
-    newUser.type='healthofficial'
+    newUser.type = 'healthofficial'
 
     // Overwrite sent password with new hashed/salted password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newUser.password, salt);
     newUser.password = hash;
 
-    req.pool.getConnection(function(err, connection){
+    req.pool.getConnection(function (err, connection) {
 
         var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
         var insertQuery = "INSERT INTO HealthOfficial (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";

@@ -9,7 +9,6 @@ var axios = require('axios');
  */
 router.get('/', function (req, res) {
     return res.render('dashboard.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('dashboard.html', { root: 'views' });
 });
 
 /*
@@ -18,7 +17,6 @@ router.get('/', function (req, res) {
  */
 router.get('/check-in', function (req, res) {
     return res.render('check-in.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('check-in.html', { root: 'views' });
 });
 
 router.post('/check-in', function (req, res) {
@@ -123,7 +121,6 @@ router.get('/check-in-history', function (req, res) {
  */
 router.get('/alerts', function (req, res) {
     return res.render('alerts.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('alerts.html', { root: 'views' });
 });
 
 module.exports = router;
