@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css?family=Roboto:300');
 
 /*
@@ -443,6 +444,7 @@ body {
 .footer-left a {
     color: #0052cc;
     text-decoration: none;
+
 }
 
 .fill-page {
@@ -454,6 +456,8 @@ body {
 }
 
 
+
 #venueRego.venueregister {
     display:none;
+
 }
