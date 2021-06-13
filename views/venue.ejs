@@ -54,44 +54,52 @@
                     <p>View and edit information about your venue</p>
                 </div>
 
-                <div class="info-div">
-                    <p>
-                        <b>Venue Name: </b>{{ venue.Name }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Venue Address: </b>{{ venue.Address }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Venue Owner: </b>{{ venue.FirstName }} {{ venue.LastName }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                </div>
 
-                <div class="venue-table-div">
-                    <table class="venue-table">
-                        <tr>
-                            <th>Check-in ID</th>
-                            <th>Timestamp</th>
-                            <th>First name</th>
-                            <th>Last name</th>
-                        </tr>
-                        <tr v-for="(entry,i) in checkIn" :key="i">
-                            <td>{{ entry.CheckInID }}</td>
-                            <td>{{ entry.Date }}</td>
-                            <td>{{ entry.FirstName }}</td>
-                            <td>{{ entry.LastName }}</td>
-                        </tr>
-                    </table>
-                </div>
+                <form method="POST" action='/venue/update'>
 
+                    <div class="info-div">
+                        <p>
+                            <b>Venue Name: </b>{{ venue.Name }}
+                            <button class="edit-button" type="button" onclick="edit()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <br>
+                            <input v-bind:class="{ 'edit' : editON}" type="text" id="name" name="name"  v-model="venue.Name"/>
+                        </p>
+                        <p>
+                            <b>Venue Address: </b>{{ venue.Address }}
+                        </p>
+                        <p>
+                            <b>Venue Owner: </b>{{ venue.FirstName }} {{ venue.LastName }}
+                            <button class="edit-button" type="button" onclick="edit()">
+                                <i class="fas fa-edit"></i>
+                            </button >
+                            <br>
+                            <input v-bind:class="{ 'edit' : editON}" type="text" id="fname" name="fname" v-model="venue.FirstName"/>
+                            <input v-bind:class="{ 'edit' : editON}" type="text" id="lname" name="lname" v-model="venue.LastName"/>
+                        </p>
+
+                        <button class="form-submit form-register" v-bind:class="{ 'edit' : editON}" type="submit" ><span>Update Details</span></button>
+
+                    </div>
+
+                    <div class="venue-table-div">
+                        <table class="venue-table">
+                            <tr>
+                                <th>Check-in ID</th>
+                                <th>Timestamp</th>
+                                <th>First name</th>
+                                <th>Last name</th>
+                            </tr>
+                            <tr v-for="(entry,i) in checkIn" :key="i">
+                                <td>{{ entry.CheckInID }}</td>
+                                <td>{{ entry.Date }}</td>
+                                <td>{{ entry.FirstName }}</td>
+                                <td>{{ entry.LastName }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
             </div>
 
             <footer class="footer">
