@@ -179,6 +179,18 @@ body {
 
 /* STANDARD ELEMENTS */
 
+.clickable {
+    color: #000000;
+    background-color: transparent;
+    cursor: default;
+}
+
+.clickable:hover {
+    color: #ffffff;
+    background-color: #0065ff;
+    cursor: pointer;
+}
+
 .title-div {
     margin: 0px 16%;
     border-bottom: 1px solid #dddddd;
@@ -190,7 +202,7 @@ body {
 }
 
 .container-element {
-    margin: 24px 16%;
+    margin: 24px 0px;
 }
 
 .info-div {
@@ -265,6 +277,45 @@ body {
 
 .center {
     text-align: center;
+}
+
+/* HOTSPOT ELEMENTS */
+
+.hotspot-table-div {
+    margin-top: 20px;
+    margin-left: 16%;
+    margin-right: 16%;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.hotspot-table {
+    width: 100%;
+    border: none;
+}
+
+.hotspot-table tr {
+    width: 100%;
+    border: none;
+    background-color: #f9f9f9;
+}
+
+.hotspot-table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.hotspot-table tr:nth-child(even):hover {
+    background-color: #0065ff;
+}
+
+.hotspot-table tr th {
+    text-align: left;
+    padding: 8px;
+}
+
+.hotspot-table tr td {
+    text-align: left;
+    padding: 8px;
 }
 
 /* ALERT ELEMENTS */

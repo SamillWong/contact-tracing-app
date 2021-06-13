@@ -25,6 +25,7 @@ var vueinst = new Vue({
     el: '#content',
     data() {
         return {
+            currentHotspot: 0,
             hotspot: null,
         }
     },
