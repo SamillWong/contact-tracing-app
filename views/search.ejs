@@ -19,6 +19,7 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
                         <a href="/profile" class="header-right">Profile</a>
@@ -30,12 +31,15 @@
                         <a href="/dashboard/check-in">Check-in</a>
                         <a href="/dashboard/alerts">View Alerts</a>
                     <% } %>
-                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified == 2) { %>
                         <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official</a>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
                     <% } %>
                 </header>
 
@@ -53,21 +57,21 @@
                     </ul>
                 </div>
 
-
                 <div class="title-div">
                     <h2>Health Official</h2>
                     <p>Search for Users and Venues</p>
                 </div>
-                <!-- buttons removed for now
-                <div class="register-switcher" style="display:inline-block">
+
+                <div class="info-div">
+                    <div class="register-switcher" style="display:inline-block">
                         <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="UserVis()">
                             <label class="form-input-left register-label" for="userbutton">User Search</label>
                         </input>
                         <input class="register-radio" type="radio" id="managerbutton" name="type"value="manager" required onclick="VenueVis()">
                             <label class="form-input-right register-label" for="managerbutton">Venue Search</label>
                         </input>
+                    </div>
                 </div>
-                 --->
 
                 <div id="Search">
                     <div v-bind:class="{ 'UserSearchOFF' : UserSearch}">
