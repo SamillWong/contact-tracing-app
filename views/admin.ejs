@@ -7,6 +7,8 @@
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
         <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="../javascripts/hotspot.js" defer></script>
     </head>
 
     <body>
@@ -17,6 +19,7 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
                         <a href="/profile" class="header-right">Profile</a>
@@ -28,12 +31,15 @@
                         <a href="/dashboard/check-in">Check-in</a>
                         <a href="/dashboard/alerts">View Alerts</a>
                     <% } %>
-                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified == 2) { %>
                         <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official</a>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
                     <% } %>
                 </header>
 
@@ -47,93 +53,88 @@
                     </ul>
                 </div>
 
-                 <div class="title-div">
+                <div class="title-div">
                     <h2>Health Official</h2>
                     <p>View and manage hotspots, users and venues</p>
                 </div>
 
-            <div style = "width:100%;">
-                <div style = "float:left;width:50%;height:400px;margin-left:22%;margin-right:-22%;margin-bottom:-100px">
+                <div class="info-div">
+                    <p class="center">
+                        <a class="admin-nav" href="/admin/users">
+                            <button class="form-submit" id="health-official-button" type="submit">
+                                Manage Users
+                            </button>
+                        </a>
+                        <a class="admin-nav" href="/admin/venues">
+                            <button class="form-submit" id="health-official-button" type="submit">
+                                Manage Venues
+                            </button>
+                        </a>
+                        <a class="admin-nav" href="/admin/register">
+                            <button class="form-submit" id="health-official-button" type="submit">
+                                Register a health official
+                            </button>
+                        </a>
+                    </p>
+                </div>
 
+                <div class="title-div">
+                    <h2>Add Hotspot</h2>
+                    <p>Mark a venue as a hotspot by entering the associated venue code</p>
+                </div>
 
-
-                    <form action=/admin/venues>
-                            <button class="form-submit" id = "health-official-button" type="submit" value="login"><span>Search for Users and Venues</span></button>
+                <div class="container-element">
+                    <form class="login-form center" autocomplete="off" method="POST" action="/admin/hotspot/add">
+                        <div>
+                            <input class="form-input" id="venueid" name="venueid" type="text" maxlength="6">
+                        </div>
+                        <div>
+                            <button class="form-submit" type="submit"><span>Mark as hotspot</span></button>
+                        </div>
                     </form>
-
-
                 </div>
 
-                <div style = "margin-top:3%;">
-
-
-                        <div class="login-header">
-                            <p>Register a Health Official</p>
-                        </div>
-
-                        <div class="login-input">
-                            <form class="login-form" method="POST" action='/admin/register'>
-                                <div style = "height:50px;float:left;width:50%">
-                                    <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" style = "padding:10px;margin-right:10px"/>
-                                    <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" style = "padding:10px;margin-left:10px;float:left;"/>
-                                </div>
-                                <div>
-                                    <input class="form-input" type="email" id="email" name="email" placeholder="Email" style = "padding: 10px;"/>
-                                </div>
-
-                                <div>
-                                    <input class="form-input" type="password" id="password" name="password" placeholder="Password" style = "padding: 10px;"/>
-                                </div>
-                                <div>
-                                    <input class="form-input" type="password" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password" style = "padding: 10px;"/>
-                                </div>
-                                <div>
-                                    <button class="form-submit form-register" type="submit"><span>Register</span></button>
-                                </div>
-                            </form>
-                        </div>
-
+                <div class="title-div">
+                    <h2>Current Hotspots</h2>
+                    <p>See and manage active hotspots</p>
                 </div>
-            </div>
 
-
-
-               <div class="venue-table-div" style = "margin-bottom:50px;">
-                   <div style = "float:left;width:600px;">
-                       <p>Current Venue Hotspots</p>
-                   </div>
+                <div class="venue-table-div" style="margin-bottom:50px;">
                     <table class="venue-table">
                         <tr>
-                            <th>Venue ID</th>
+                            <th>Hotspot ID</th>
+                            <th>Timestamp</th>
                             <th>Venue Name</th>
                             <th colspan="2">Venue Address</th>
                         </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Woodville Pizza Bar</a></td>
-                            <td>1/58 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
-                            <td><a href="#" class="venue-button">Remove Hotspot</a></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><a href="#">Snap Fitness Woodville 24/7</a></td>
-                            <td>57 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
-                            <td><a href="#" class="venue-button">Remove Hotspot</a></td>
+                        <tr v-for="(entry,i) in hotspot" :key="i">
+                            <td>{{ entry.HotspotID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.Name }}</td>
+                            <td>{{ entry.Address }}</td>
+                            <td><a v-bind:href="'/admin/hotspot/delete/'+entry.HotspotID" class="venue-button">Remove Hotspot</a></td>
                         </tr>
                     </table>
                 </div>
 
 
-                 <footer class="footer">
+                <footer class="footer">
                     <div class="footer-div">
                         <p class="footer-left"><b>COVIDTrace</b></p>
-                        <p class="footer-left">If you need information about COVID-19 or COVID-19 vaccines, please call 1800 020 080.</p>
+                        <p class="footer-left">If you need information about COVID-19 or COVID-19 vaccines, please call 1800
+                            020 080.</p>
                         <p class="footer-left">
                             <a href="#">Privacy Policy</a> &bull;
                             <a href="#">Terms of Use</a> &bull;
                             <a href="#">Copyright Information</a>
-                    </p>
-                </div>
-            </footer>
+                        </p>
+                    </div>
+                </footer>
+
+            </div>
+
+        </div>
+
     </body>
+
 </html>
