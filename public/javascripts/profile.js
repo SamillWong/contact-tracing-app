@@ -21,12 +21,17 @@ async function sendAJAX(url) {
     }
 }
 
+function edit(){
+    vueinst.editON=!vueinst.editON;
+}
+
 var vueinst = new Vue({
     el: '#content',
     data() {
         return {
             user: null,
-            checkIn: null
+            checkIn: null,
+            editON: true,
         }
     },
     async mounted() {

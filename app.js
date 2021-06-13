@@ -89,7 +89,7 @@ app.get('/profile*', function (req, res, next) {
     if (req.session.verified > 0) {
         next();
     } else {
-        return res.redirect('/login');
+        return res.redirect("/login?redirect="+encodeURIComponent(req.url));
     }
 });
 
@@ -97,7 +97,7 @@ app.get('/dashboard*', function (req, res, next) {
     if (req.session.verified == 1) {
         next();
     } else {
-        return res.redirect('/login');
+        return res.redirect("/login?redirect="+encodeURIComponent(req.url));
     }
 });
 
@@ -105,7 +105,7 @@ app.get('/venue*', function (req, res, next) {
     if (req.session.verified == 2) {
         next();
     } else {
-        return res.redirect('/login');
+        return res.redirect("/login?redirect="+encodeURIComponent(req.url));
     }
 });
 
