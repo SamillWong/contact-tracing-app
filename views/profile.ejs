@@ -53,33 +53,54 @@
                     <h2>Profile</h2>
                     <p>View and edit information about your COVIDTrace account</p>
                 </div>
+                <form method="POST" action='/profile'>
+                    <div class="info-div">
+                        <p>
+                            <b>Name: </b>
 
-                <div class="info-div">
-                    <p>
-                        <b>Name: </b>{{ user.FirstName }} {{ user.LastName }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Email: </b>{{ user.Email }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Address: </b>{{ user.Address }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                    <p>
-                        <b>Contact number: </b>{{ user.ContactNumber }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
-                </div>
+                            {{ user.FirstName }} {{ user.LastName }}
+
+                            <button class="edit-button" type="button" onclick="edit()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <br>
+                            <input v-bind:class="{ 'edit' : editON}" type="text" id="fname" name="fname"  v-model="user.FirstName"/>
+                            <input v-bind:class="{ 'edit' : editON}" type="text" id="lname" name="lname" v-model="user.LastName"/>
+                        </p>
+
+                        <p>
+                            <b>Email: </b>{{ user.Email }}
+                            <button class="edit-button" type="button" onclick="edit()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <br>
+                            <input v-bind:class="{ 'edit' : editON}" type="email" id="email" name="email" v-model="user.Email"/>
+                        </p>
+                        <p>
+                            <b>Address: </b>{{ user.Address }}
+                            <button class="edit-button" type="button" onclick="edit()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <br>
+                            <input v-bind:class="{ 'edit' : editON}" type="text" id="address" name="address" v-model="user.Address"/>
+                        </p>
+                        <p>
+                            <b>Contact number: </b>{{ user.ContactNumber }}
+                            <button class="edit-button" type="button" onclick="edit()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <br>
+                            <input v-bind:class="{ 'edit' : editON}" type="text" id="contact" name="contact" v-model="user.ContactNumber"/>
+                        </p>
+
+                        <button class="form-submit form-register" v-bind:class="{ 'edit' : editON}" type="submit" ><span>Update Details</span></button>
+
+                    </div>
+                </form>
+
+
+
+
 
                 <% if (params.verified == 1) { %>
                     <div class="venue-table-div">

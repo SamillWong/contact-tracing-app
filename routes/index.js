@@ -18,7 +18,6 @@ router.get('/login', function (req, res) {
 
 // Regular login
 router.post('/login', function (req, res, next) {
-    // TODO: Add input validation and implement server-side
     var returningUser = {
         email: req.body.email, // TODO: Make email case-insensitive
         password: req.body.password
@@ -279,8 +278,35 @@ router.get('/profile', function (req, res) {
 });
 
 router.post('/profile', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
+    const newDetails = {
+        fname: req.body.fname,
+        lname: req.body.lname,
+        email: req.body.email,
+        address: req.body.address,
+        contact: req.body.contact,
+    }
+
+    req.pool.getConnection(function (err, connection){
+
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        var updateQuery = "UPDATE User SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE UserID = ?;";
+
+
+        connection.query(updateQuery, [newDetails.fname, newDetails.lname, newDetails.email, newDetails.address, newDetails.contact, req.session.userid], function (err,rows){
+            if (err) {
+                console.log("Error at connection.query(insert)\n" + err);
+                res.sendStatus(500);
+                return;
+            }
+        })
+    })
+    res.redirect('/profile');
+
 });
 
 module.exports = router;
