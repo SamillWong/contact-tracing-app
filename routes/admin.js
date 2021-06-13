@@ -16,20 +16,16 @@ router.get('/', function (req, res) {
  * Admins should be able to sign up other admins.
  */
 router.get('/register', function (req, res) {
-    return res.sendFile('admin-register.html', { root: 'views' });
+    return res.render('admin-register.ejs', { params: { verified: req.session.verified } });
 });
 
 router.post('/register', function (req, res) {
-    // TODO: Implement server-side
-
     const newUser = {
         fname: req.body.fname,
         lname: req.body.lname,
-        email: req.body.email, // TODO: Make email case-insensitive
-        password: req.body.password,
-        type: req.body.type
+        email: req.body.email,
+        password: req.body.password
     };
-    newUser.type = 'healthofficial'
 
     // Overwrite sent password with new hashed/salted password
     const salt = bcrypt.genSaltSync(10);
@@ -38,7 +34,13 @@ router.post('/register', function (req, res) {
 
     req.pool.getConnection(function (err, connection) {
 
-        var selectQuery = "SELECT Email FROM User WHERE Email=? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        var selectQuery = "SELECT Email FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ?;";
         var insertQuery = "INSERT INTO HealthOfficial (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
 
         getPromise = (query, param) => {
@@ -53,7 +55,6 @@ router.post('/register', function (req, res) {
             try {
                 var promises = [
                     getPromise(insertQuery, [newUser.email, newUser.password, newUser.fname, newUser.lname]),
-                    getPromise(selectQuery, [newUser.email])
                 ];
                 return await Promise.all(promises);
             } catch (err) {
@@ -67,46 +68,104 @@ router.post('/register', function (req, res) {
                 res.sendStatus(500);
                 return;
             }
-            // Email does not exist, register new account and log them in
+            // Email does not exist, register new account
             if (rows.length == 0) {
-                var result = await register();
-                connection.release();
-                res.redirect('/admin');
-
+                await register();
             }
-            // Email already exists in HealthOfficial, redirect to /login
-            else {
-                connection.release();
-                res.redirect('/login');
-            }
+            connection.release();
+            res.redirect('/admin');
         });
     });
-});
-
-/*
- * GET/POST admin profile page
- * Logged-in admins should be able to view and edit their user information.
- */
-router.get('/profile', function (req, res) {
-    return res.sendFile('admin-profile.html', { root: 'views' });
-});
-
-router.post('/profile', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
 });
 
 /*
  * GET/POST admin hotspot management page
  * Admins should be able to manage hotspots.
  */
-router.get('/hotspots', function (req, res) {
-    return res.sendFile('admin-hotspots.html', { root: 'views' });
+router.post('/hotspot/add', function (req, res) {
+
+    var venueid = req.body.venueid;
+
+    req.pool.getConnection(function (err, connection) {
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        // Verify that the venue exists.
+        var selectQuery = "SELECT * FROM Venue WHERE VenueID = ?;";
+
+        connection.query(selectQuery, [venueid], async function (err, rows, fields) {
+            if (err) {
+                console.log("Error at req.pool.getConnection\n" + err);
+                res.sendStatus(500);
+                return;
+            }
+
+            // Venue does not exist, send error response.
+            if (rows.length == 0) {
+                connection.release();
+            }
+            // Venue exists, create a new hotspot entry.
+            else {
+                var insertHotspot = "INSERT INTO Hotspot (VenueID) VALUES (?);";
+
+                connection.query(insertHotspot, [venueid], async function (err, rows, fields) {
+                    connection.release();
+                    if (err) {
+                        console.log("Error at insertCheckIn query\n" + err);
+                        res.sendStatus(500);
+                        return;
+                    }
+                });
+            }
+            res.redirect('/admin');
+        })
+    });
 });
 
-router.post('/hotspots', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
+router.get('/hotspot/delete/:id', function (req, res) {
+
+    var hotspotid = req.params.id;
+
+    req.pool.getConnection(function (err, connection) {
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        // Verify that the hotspot code matches an existing hotspot.
+        var selectQuery = "SELECT * FROM Hotspot WHERE HotspotID = ?;";
+
+        connection.query(selectQuery, [hotspotid], async function (err, rows, fields) {
+            if (err) {
+                console.log("Error at selectQuery\n" + err);
+                res.sendStatus(500);
+                return;
+            }
+
+            // Hotspot does not exist, send error response.
+            if (rows.length == 0) {
+                connection.release();
+            }
+            // Hotspot exists, delete entry.
+            else {
+                var deleteQuery = "DELETE FROM Hotspot WHERE HotspotID = ?;";
+
+                connection.query(deleteQuery, [hotspotid], async function (err, rows, fields) {
+                    connection.release();
+                    if (err) {
+                        console.log("Error at deleteQuery\n" + err);
+                        res.sendStatus(500);
+                        return;
+                    }
+                });
+            }
+            res.redirect('/admin');
+        })
+    });
 });
 
 /*
@@ -136,7 +195,7 @@ router.post('/users', function (req, res) {
 
         // Construct rows from each query
         async function makeQuery() {
-            var profileQuery = "SELECT UserID, Email, FIrstName, LastName, Address, ContactNumber FROM User WHERE Email = ?;";
+            var profileQuery = "SELECT UserID, Email, FirstName, LastName, Address, ContactNumber FROM User WHERE Email = ?;";
             try {
                 const promises = [getPromise(profileQuery, [req.body.email])];
                 return await Promise.all(promises);
