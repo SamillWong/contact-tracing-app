@@ -2,7 +2,7 @@ var vueSearch = new Vue({
     el: '#Search',
     data: {
         UserSearch: false,
-        VenueSearch: true,
+        VenueSearch: false,
     }
 });
 
