@@ -112,7 +112,7 @@ router.get('/check-in/:code', function (req, res) {
  * Logged-in users should be able to see their check-in history on a map.
  */
 router.get('/check-in-history', function (req, res) {
-    return res.sendFile('history.html', { root: 'views' });
+    return res.render('history.ejs', { params: { verified: req.session.verified } });
 });
 
 /*
