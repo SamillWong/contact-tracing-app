@@ -584,3 +584,8 @@ body {
 #content .edit{
     display:none;
 }
+
+#map {
+    display: inline;
+    margin-left: 320px;
+}

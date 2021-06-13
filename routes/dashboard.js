@@ -115,6 +115,49 @@ router.get('/check-in-history', function (req, res) {
     return res.sendFile('history.html', { root: 'views' });
 });
 
+/*GET next function
+If user been to hotspot 14 days ago, go next function*/
+
+router.get('/danger-users',function (req, res, next) {
+    req.pool.getConnection(async function (err, connection) {
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        var grapUserIDQuery = "SELECT CheckIn.UserID,CheckIn.VenueID FROM CheckIn INNER JOIN Hotspot ON CheckIn.VenueID = Hotspot.VenueID WHERE ((ABS(TIMESTAMPDIFF(DAY,Hotspot.Date,CheckIn.Date)) <= 14) OR (ABS(TIMESTAMPDIFF(SECOND,Hotspot.Date,CheckIn.Date)) <= 86400));"
+
+        getPromise = (query, param) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, param, function (err, rows, fields) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                });
+            });
+        }
+
+        async function makeQuery() {
+            try {
+                const promises = [getPromise(grapUserIDQuery)];
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        var result = await makeQuery();
+        connection.release();
+
+        for(var i=0; i<result[0][0].length; i++) {
+                if(result[0][0][i].userid.indexOf(parseInt(req.session.userid,10))!=-1) {
+                    next();
+                }
+        }
+        res.sendStatus(200);
+    });
+});
+
 /*
  * GET alerts page
  * Logged-in users should be able to see if they have been to a hotspot.
