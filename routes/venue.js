@@ -13,7 +13,6 @@ router.get('/', function (req, res) {
 });
 
 router.post('/update', function (req, res) {
-    // TODO: Implement server-side
     const newDetails = {
         fname: req.body.fname,
         lname: req.body.lname,
@@ -28,8 +27,6 @@ router.post('/update', function (req, res) {
             return;
         }
         var updateQuery = "UPDATE Venue INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID SET Name = ?, VenueManager.FirstName = ?, VenueManager.LastName = ? WHERE VenueID = ?;";
-        //var updateQuery = "UPDATE Venue SET Name = ?, VenueManager.FirstName = ?, VenueManager.LastName = ? WHERE VenueID = ? INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID ;";
-
 
         connection.query(updateQuery, [newDetails.venuename, newDetails.fname, newDetails.lname, req.session.managerid], function (err,rows){
             if (err) {
