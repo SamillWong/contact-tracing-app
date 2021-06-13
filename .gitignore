@@ -3,7 +3,7 @@
 ### NODE ###
 
 # Environmental variables
-.env
+.env*
 
 # Logs
 logs
@@ -12,3 +12,8 @@ npm-debug.log*
 
 # Dependency directories
 node_modules/
+
+### MYSQL ###
+
+# Test database schema
+CovidTrace_test.sql

@@ -6,7 +6,6 @@ var axios = require('axios');
 /* GET home page */
 router.get('/', function (req, res) {
     return res.render('index.ejs', { params: { verified: req.session.verified } });
-    // return res.sendFile('index.html', { root: 'views' });
 });
 
 /*
@@ -14,7 +13,7 @@ router.get('/', function (req, res) {
  * Users should be able to log in to their account.
  */
 router.get('/login', function (req, res) {
-    return res.sendFile('login.html', { root: 'views' });
+    return res.render('login.ejs', { params: { redirect: req.query.redirect } });
 });
 
 // Regular login
@@ -64,15 +63,27 @@ router.post('/login', function (req, res, next) {
                     switch (i) {
                         case 0:
                             req.session.userid = result[i][0].UserID;
-                            res.redirect('/profile');
+                            if (req.body.redirect) {
+                                res.redirect(req.body.redirect);
+                            } else {
+                                res.redirect('/profile');
+                            }
                             break;
                         case 1:
                             req.session.managerid = result[i][0].ManagerID;
-                            res.redirect('/venue');
+                            if (req.body.redirect) {
+                                res.redirect(req.body.redirect);
+                            } else {
+                                res.redirect('/venue');
+                            }
                             break;
                         case 2:
                             req.session.healthofficalid = result[i][0].HealthOfficialID;
-                            res.redirect('/admin');
+                            if (req.body.redirect) {
+                                res.redirect(req.body.redirect);
+                            } else {
+                                res.redirect('/admin');
+                            }
                             break;
                         default:
                             res.redirect('/login')
@@ -102,7 +113,7 @@ router.get('/logout', function (req, res) {
  * Users should be able to register for an account.
  */
 router.get('/register', function (req, res) {
-    return res.sendFile('register.html', { root: 'views' });
+    return res.render('register.ejs');
 });
 
 // Returns latitude and longtitude
@@ -111,7 +122,7 @@ async function getLat(givenaddress) {
         const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
             params: {
                 address: givenaddress,
-                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+                key: process.env.MAP_API_KEY
             }
         });
         var newLatitude = response.data.results[0].geometry.location.lat;
@@ -126,7 +137,7 @@ async function getLong(givenaddress) {
         const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
             params: {
                 address: givenaddress,
-                key: 'AIzaSyAX4hjQDIKO1bjofj6JdeTqmdShvWDGfkk'
+                key: process.env.MAP_API_KEY
             }
         });
         var newLongitude = response.data.results[0].geometry.location.lng;
@@ -178,7 +189,7 @@ router.post('/register', function (req, res, next) {
 
         // Venue manager selected
         if (newUser.type == "manager") {
-            var selectQuery = "SELECT ManagerID FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
+            var selectQuery = "SELECT ManagerID FROM VenueManager WHERE Email = ? UNION SELECT Email FROM User WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
             var venueInsertQuery = "INSERT INTO Venue (Name, Address, Latitude, Longitude) VALUES (?, ?, ?, ?);";
         }
@@ -238,7 +249,6 @@ router.post('/register', function (req, res, next) {
                 // Account belongs to a user, redirect to profile page
                 else {
                     req.session.verified = 1;
-                    console.log(result[1][0].UserID);
                     req.session.userid = result[1][0].UserID;
                     res.redirect('/profile');
                 }
@@ -258,7 +268,6 @@ router.post('/register', function (req, res, next) {
  */
 router.get('/hotspots', function (req, res) {
     return res.render('hotspots.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('hotspots.html', { root: 'views' });
 });
 
 /*
@@ -267,7 +276,6 @@ router.get('/hotspots', function (req, res) {
  */
 router.get('/profile', function (req, res) {
     return res.render('profile.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('profile.html', { root: 'views' });
 });
 
 router.post('/profile', function (req, res) {

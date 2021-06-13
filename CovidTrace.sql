@@ -1,6 +1,6 @@
 -- MySQL dump 10.16  Distrib 10.1.48-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: 
+-- Host: localhost    Database: CovidTrace
 -- ------------------------------------------------------
 -- Server version	10.1.48-MariaDB-0ubuntu0.18.04.1
 
@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `CheckIn`;
 CREATE TABLE `CheckIn` (
   `CheckInID` int(11) NOT NULL AUTO_INCREMENT,
   `VenueID` int(11) NOT NULL,
-  `Date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `Date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `UserID` int(11) NOT NULL,
   PRIMARY KEY (`CheckInID`),
   KEY `VenueID` (`VenueID`),
@@ -149,4 +149,4 @@ CREATE TABLE `VenueManager` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-06 23:14:44
+-- Dump completed on 2021-06-13  4:11:48

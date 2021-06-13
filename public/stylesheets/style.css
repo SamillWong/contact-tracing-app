@@ -291,6 +291,13 @@ body {
     padding: 8px;
 }
 
+.venue-qr-code {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 45%;
+}
+
 /* LOGIN ELEMENTS */
 
 .login-page {
