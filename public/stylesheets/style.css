@@ -525,3 +525,9 @@ body {
 #Search .VenueSearchOFF{
     display:none;
 }
+
+/* PROFILE EDITING */
+
+#content .edit{
+    display:none;
+}
