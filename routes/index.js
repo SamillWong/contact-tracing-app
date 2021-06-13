@@ -77,7 +77,7 @@ router.post('/login', function (req, res, next) {
                             }
                             break;
                         case 2:
-                            req.session.healthofficalid = result[i][0].HealthOfficialID;
+                            req.session.healthofficialid = result[i][0].HealthOfficialID;
                             if (req.body.redirect) {
                                 res.redirect(req.body.redirect);
                             } else {
@@ -153,7 +153,7 @@ router.post('/register', function (req, res, next) {
     const newUser = {
         fname: req.body.fname,
         lname: req.body.lname,
-        email: req.body.email, // TODO: Make email case-insensitive
+        email: req.body.email,
         password: req.body.password,
         venuename: req.body.venuename,
         address: req.body.address,
@@ -305,7 +305,7 @@ router.post('/profile/edit', function (req, res) {
                 break;
             case 3:
                 var updateQuery = "UPDATE HealthOfficial SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE HealthOfficialID = ?;";
-                var accountid = req.session.healthofficalid;
+                var accountid = req.session.healthofficialid;
                 break;
         }
 

@@ -86,7 +86,7 @@ router.post('/verify', function (req, res, next) {
                 switch (i) {
                     case 0: req.session.userid = result[i][0].UserID; break;
                     case 1: req.session.managerid = result[i][0].ManagerID; break;
-                    case 2: req.session.healthofficalid = result[i][0].HealthOfficialID; break;
+                    case 2: req.session.healthofficialid = result[i][0].HealthOfficialID; break;
                 }
                 res.sendStatus(200);
                 break;
