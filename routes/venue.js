@@ -12,11 +12,12 @@ router.get('/', function (req, res) {
     return res.render('venue.ejs', { params: { verified: req.session.verified } });
 });
 
-router.post('/update', function (req, res) {
+router.post('/edit', function (req, res) {
     const newDetails = {
         fname: req.body.fname,
         lname: req.body.lname,
         venuename: req.body.name,
+        venueaddress: req.body.address
     }
 
     req.pool.getConnection(function (err, connection){
@@ -26,9 +27,9 @@ router.post('/update', function (req, res) {
             res.sendStatus(500);
             return;
         }
-        var updateQuery = "UPDATE Venue INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID SET Name = ?, VenueManager.FirstName = ?, VenueManager.LastName = ? WHERE VenueID = ?;";
+        var updateQuery = "UPDATE Venue INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID SET Venue.Name = ?, Venue.Address = ?, VenueManager.FirstName = ?, VenueManager.LastName = ? WHERE VenueID = ?;";
 
-        connection.query(updateQuery, [newDetails.venuename, newDetails.fname, newDetails.lname, req.session.managerid], function (err,rows){
+        connection.query(updateQuery, [newDetails.venuename, newDetails.venueaddress, newDetails.fname, newDetails.lname, req.session.managerid], function (err,rows){
             if (err) {
                 console.log("Error at connection.query(insert)\n" + err);
                 res.sendStatus(500);
