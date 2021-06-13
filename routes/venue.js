@@ -12,9 +12,36 @@ router.get('/', function (req, res) {
     return res.render('venue.ejs', { params: { verified: req.session.verified } });
 });
 
-router.post('/', function (req, res) {
+router.post('/update', function (req, res) {
     // TODO: Implement server-side
-    return res.send("Success");
+    const newDetails = {
+        fname: req.body.fname,
+        lname: req.body.lname,
+        venuename: req.body.name,
+    }
+
+    req.pool.getConnection(function (err, connection){
+
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+        var updateQuery = "UPDATE Venue INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID SET Name = ?, VenueManager.FirstName = ?, VenueManager.LastName = ? WHERE VenueID = ?;";
+        //var updateQuery = "UPDATE Venue SET Name = ?, VenueManager.FirstName = ?, VenueManager.LastName = ? WHERE VenueID = ? INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID ;";
+
+
+        connection.query(updateQuery, [newDetails.venuename, newDetails.fname, newDetails.lname, req.session.managerid], function (err,rows){
+            if (err) {
+                console.log("Error at connection.query(insert)\n" + err);
+                res.sendStatus(500);
+                return;
+            }
+        })
+    })
+    res.redirect('/venue');
+
+
 });
 
 /*
