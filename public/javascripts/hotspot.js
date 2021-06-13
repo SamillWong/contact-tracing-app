@@ -26,15 +26,22 @@ var vueinst = new Vue({
     data() {
         return {
             currentHotspot: 0,
-            hotspot: null,
+            hotspot: [{
+                HotspotID: "No hotspots found",
+                Date: "",
+                Name: "",
+                Address: ""
+            }],
         }
     },
     async mounted() {
         var hotspot = await sendAJAX("/api/hotspot");
-        for (entry in hotspot[0]) {
-            const oldStamp = hotspot[0][entry].Date
-            hotspot[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
+        if (hotspot != "[]") {
+            for (entry in hotspot[0]) {
+                const oldStamp = hotspot[0][entry].Date
+                hotspot[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
+            }
+            this.hotspot = hotspot[0];
         }
-        this.hotspot = hotspot[0];
     }
 });

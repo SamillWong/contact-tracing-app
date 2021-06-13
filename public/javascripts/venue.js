@@ -31,7 +31,12 @@ var vueinst = new Vue({
     data() {
         return {
             venue: null,
-            checkIn: null,
+            checkIn: [{
+                CheckInID: "No entries found",
+                Date: "",
+                Name: "",
+                Address: ""
+            }],
             editON: true,
         }
     },
@@ -39,10 +44,12 @@ var vueinst = new Vue({
         var profile = await sendAJAX("/api/venue");
         this.venue = profile[0];
         var checkIn = await sendAJAX("/api/check-in");
-        for (entry in checkIn[0]) {
-            const oldStamp = checkIn[0][entry].Date
-            checkIn[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
+        if (checkIn != "[]") {
+            for (entry in checkIn[0]) {
+                const oldStamp = checkIn[0][entry].Date
+                checkIn[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
+            }
+            this.checkIn = checkIn[0];
         }
-        this.checkIn = checkIn[0];
     }
 });
