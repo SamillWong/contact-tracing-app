@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Health Official Registration - COVIDTrace</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+        <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
+    </head>
+
+    <body>
+
+        <div id="page-container">
+
+            <div id="content">
+
+                <header class="header">
+                    <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
+                    <% if (params.verified > 0) { %>
+                        <a href="/logout" class="header-right">Logout</a>
+                        <a href="/profile" class="header-right">Profile</a>
+                    <% } else { %>
+                        <a href="/register" class="header-right">Register</a>
+                        <a href="/login" class="header-right">Login</a>
+                    <% } %>
+                    <% if (params.verified == 1) { %>
+                        <a href="/dashboard/check-in">Check-in</a>
+                        <a href="/dashboard/alerts">View Alerts</a>
+                    <% } %>
+                    <% if (params.verified == 2) { %>
+                        <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
+                    <% } %>
+                    <% if (params.verified == 3) { %>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
+                    <% } %>
+                </header>
+
+                <div class="breadcrumb-div">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>
+                            <a href="/admin">Health Official</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>Health Official Registration</li>
+                    </ul>
+                </div>
+
+                <div class="title-div">
+                    <h2>Health Official Registration</h2>
+                    <p>Use this form to register another health official</p>
+                </div>
+
+                <div class="info-div">
+                    <div class="login-block">
+
+                        <div class="login-header">
+                            <h3>Register</h3>
+                            <p>Create a COVIDTrace account for a health official</p>
+                        </div>
+
+                        <div class="login-input">
+                            <form class="login-form" method="POST" action='/admin/register'>
+                                <div>
+                                    <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" required/>
+                                    <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" required/>
+                                </div>
+                                <div>
+                                    <input class="form-input" type="text" id="username" name="email" placeholder="Email" />
+                                </div>
+                                <div>
+                                    <input class="form-input" type="password" id="password" name="password" placeholder="Password" />
+                                </div>
+                                <div>
+                                    <input class="form-input" type="password" id="confirmpassword" name="confirmpassword"  placeholder="Confirm Password" oninput=matching(this) required/>
+                                </div>
+
+                                <div>
+                                    <button class="form-submit form-register" type="submit" ><span>Register</span></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="footer">
+                    <div class="footer-div">
+                        <p class="footer-left"><b>COVIDTrace</b></p>
+                        <p class="footer-left">If you need information about COVID-19 or COVID-19 vaccines, please call 1800
+                            020 080.</p>
+                        <p class="footer-left">
+                            <a href="#">Privacy Policy</a> &bull;
+                            <a href="#">Terms of Use</a> &bull;
+                            <a href="#">Copyright Information</a>
+                        </p>
+                    </div>
+                </footer>
+
+            </div>
+
+        </div>
+
+    </body>
+
+</html>
