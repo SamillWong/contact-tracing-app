@@ -58,10 +58,7 @@ var vueinst = new Vue({
     },
     watch: {
         query: function (val) {
-            if (this.query.length > 2) {
-                this.searchVenue();
-                console.log(this.venue);
-            }
+            this.searchVenue();
         }
     }
 });
