@@ -2,13 +2,11 @@
 <html lang="en">
 
     <head>
-        <title>Health Official - COVIDTrace</title>
+        <title>Health Official Registration - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
         <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-        <script src="../javascripts/hotspot.js" defer></script>
     </head>
 
     <body>
@@ -50,74 +48,50 @@
                             <a href="/">Home</a>
                             <span class="breadcrumb-divider">/</span>
                         </li>
-                        <li>Health Official</li>
+                        <li>
+                            <a href="/admin">Health Official</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>Health Official Registration</li>
                     </ul>
                 </div>
 
                 <div class="title-div">
-                    <h2>Health Official</h2>
-                    <p>View and manage hotspots, users and venues</p>
+                    <h2>Health Official Registration</h2>
+                    <p>Use this form to register another health official</p>
                 </div>
 
                 <div class="info-div">
-                    <p class="center">
-                        <a class="admin-nav" href="/admin/users">
-                            <button class="form-submit" id="health-official-button" type="submit">
-                                Manage Users
-                            </button>
-                        </a>
-                        <a class="admin-nav" href="/admin/venues">
-                            <button class="form-submit" id="health-official-button" type="submit">
-                                Manage Venues
-                            </button>
-                        </a>
-                        <a class="admin-nav" href="/admin/register">
-                            <button class="form-submit" id="health-official-button" type="submit">
-                                Register a health official
-                            </button>
-                        </a>
-                    </p>
-                </div>
+                    <div class="login-block">
 
-                <div class="title-div">
-                    <h2>Add Hotspot</h2>
-                    <p>Mark a venue as a hotspot by entering the associated venue code</p>
-                </div>
-
-                <div class="container-element">
-                    <form class="login-form center" autocomplete="off" method="POST" action="/admin/hotspot/add">
-                        <div>
-                            <input class="form-input" id="venueid" name="venueid" type="text" maxlength="6">
+                        <div class="login-header">
+                            <h3>Register</h3>
+                            <p>Create a COVIDTrace account for a health official</p>
                         </div>
-                        <div>
-                            <button class="form-submit" type="submit"><span>Mark as hotspot</span></button>
+
+                        <div class="login-input">
+                            <form class="login-form" method="POST" action='/admin/register'>
+                                <div>
+                                    <input class="form-input-half form-input-left" type="text" id="fname" name="fname" placeholder="First name" required/>
+                                    <input class="form-input-half form-input-right" type="text" id="lname" name="lname" placeholder="Last name" required/>
+                                </div>
+                                <div>
+                                    <input class="form-input" type="text" id="username" name="email" placeholder="Email" />
+                                </div>
+                                <div>
+                                    <input class="form-input" type="password" id="password" name="password" placeholder="Password" />
+                                </div>
+                                <div>
+                                    <input class="form-input" type="password" id="confirmpassword" name="confirmpassword"  placeholder="Confirm Password" oninput=matching(this) required/>
+                                </div>
+
+                                <div>
+                                    <button class="form-submit form-register" type="submit" ><span>Register</span></button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
-
-                <div class="title-div">
-                    <h2>Current Hotspots</h2>
-                    <p>See and manage active hotspots</p>
-                </div>
-
-                <div class="venue-table-div" style="margin-bottom:50px;">
-                    <table class="venue-table">
-                        <tr>
-                            <th>Hotspot ID</th>
-                            <th>Timestamp</th>
-                            <th>Venue Name</th>
-                            <th colspan="2">Venue Address</th>
-                        </tr>
-                        <tr v-for="(entry,i) in hotspot" :key="i">
-                            <td>{{ entry.HotspotID }}</td>
-                            <td>{{ entry.Date }}</td>
-                            <td>{{ entry.Name }}</td>
-                            <td>{{ entry.Address }}</td>
-                            <td><a v-bind:href="'/admin/hotspot/delete/'+entry.HotspotID" class="venue-button">Remove Hotspot</a></td>
-                        </tr>
-                    </table>
-                </div>
-
 
                 <footer class="footer">
                     <div class="footer-div">

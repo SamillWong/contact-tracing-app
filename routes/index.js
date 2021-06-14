@@ -6,7 +6,6 @@ var axios = require('axios');
 /* GET home page */
 router.get('/', function (req, res) {
     return res.render('index.ejs', { params: { verified: req.session.verified } });
-    // return res.sendFile('index.html', { root: 'views' });
 });
 
 /*
@@ -14,12 +13,11 @@ router.get('/', function (req, res) {
  * Users should be able to log in to their account.
  */
 router.get('/login', function (req, res) {
-    return res.sendFile('login.html', { root: 'views' });
+    return res.render('login.ejs', { params: { redirect: req.query.redirect } });
 });
 
 // Regular login
 router.post('/login', function (req, res, next) {
-    // TODO: Add input validation and implement server-side
     var returningUser = {
         email: req.body.email, // TODO: Make email case-insensitive
         password: req.body.password
@@ -64,15 +62,27 @@ router.post('/login', function (req, res, next) {
                     switch (i) {
                         case 0:
                             req.session.userid = result[i][0].UserID;
-                            res.redirect('/profile');
+                            if (req.body.redirect) {
+                                res.redirect(req.body.redirect);
+                            } else {
+                                res.redirect('/profile');
+                            }
                             break;
                         case 1:
                             req.session.managerid = result[i][0].ManagerID;
-                            res.redirect('/venue');
+                            if (req.body.redirect) {
+                                res.redirect(req.body.redirect);
+                            } else {
+                                res.redirect('/venue');
+                            }
                             break;
                         case 2:
-                            req.session.healthofficalid = result[i][0].HealthOfficialID;
-                            res.redirect('/admin');
+                            req.session.healthofficialid = result[i][0].HealthOfficialID;
+                            if (req.body.redirect) {
+                                res.redirect(req.body.redirect);
+                            } else {
+                                res.redirect('/admin');
+                            }
                             break;
                         default:
                             res.redirect('/login')
@@ -102,7 +112,7 @@ router.get('/logout', function (req, res) {
  * Users should be able to register for an account.
  */
 router.get('/register', function (req, res) {
-    return res.sendFile('register.html', { root: 'views' });
+    return res.render('register.ejs');
 });
 
 // Returns latitude and longtitude
@@ -143,7 +153,7 @@ router.post('/register', function (req, res, next) {
     const newUser = {
         fname: req.body.fname,
         lname: req.body.lname,
-        email: req.body.email, // TODO: Make email case-insensitive
+        email: req.body.email,
         password: req.body.password,
         venuename: req.body.venuename,
         address: req.body.address,
@@ -178,7 +188,7 @@ router.post('/register', function (req, res, next) {
 
         // Venue manager selected
         if (newUser.type == "manager") {
-            var selectQuery = "SELECT ManagerID FROM User WHERE Email = ? UNION SELECT Email FROM VenueManager WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
+            var selectQuery = "SELECT ManagerID FROM VenueManager WHERE Email = ? UNION SELECT Email FROM User WHERE Email = ? UNION SELECT Email FROM HealthOfficial WHERE Email = ? ;";
             var insertQuery = "INSERT INTO VenueManager (Email, Password, FirstName, LastName) VALUES (?, ?, ?, ?);";
             var venueInsertQuery = "INSERT INTO Venue (Name, Address, Latitude, Longitude) VALUES (?, ?, ?, ?);";
         }
@@ -238,7 +248,6 @@ router.post('/register', function (req, res, next) {
                 // Account belongs to a user, redirect to profile page
                 else {
                     req.session.verified = 1;
-                    console.log(result[1][0].UserID);
                     req.session.userid = result[1][0].UserID;
                     res.redirect('/profile');
                 }
@@ -258,7 +267,6 @@ router.post('/register', function (req, res, next) {
  */
 router.get('/hotspots', function (req, res) {
     return res.render('hotspots.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('hotspots.html', { root: 'views' });
 });
 
 /*
@@ -267,12 +275,50 @@ router.get('/hotspots', function (req, res) {
  */
 router.get('/profile', function (req, res) {
     return res.render('profile.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('profile.html', { root: 'views' });
 });
 
-router.post('/profile', function (req, res) {
-    // TODO: Implement server-side
-    return res.send("Success");
+router.post('/profile/edit', function (req, res) {
+    const newDetails = {
+        fname: req.body.fname,
+        lname: req.body.lname,
+        email: req.body.email,
+        address: req.body.address,
+        contact: req.body.contact,
+    }
+
+    req.pool.getConnection(function (err, connection) {
+
+        if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
+            res.sendStatus(500);
+            return;
+        }
+
+        switch (req.session.verified) {
+            case 1:
+                var updateQuery = "UPDATE User SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE UserID = ?;";
+                var accountid = req.session.userid;
+                break;
+            case 2:
+                var updateQuery = "UPDATE VenueManager SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE ManagerID = ?;";
+                var accountid = req.session.managerid;
+                break;
+            case 3:
+                var updateQuery = "UPDATE HealthOfficial SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE HealthOfficialID = ?;";
+                var accountid = req.session.healthofficialid;
+                break;
+        }
+
+        connection.query(updateQuery, [newDetails.fname, newDetails.lname, newDetails.email, newDetails.address, newDetails.contact, accountid], function (err, rows) {
+            if (err) {
+                console.log("Error at connection.query(insert)\n" + err);
+                res.sendStatus(500);
+                return;
+            }
+        })
+    })
+    res.redirect('/profile');
+
 });
 
 module.exports = router;

@@ -2,7 +2,7 @@
 <html lang="en">
 
     <head>
-        <title>Venue QR Code - COVIDTrace</title>
+        <title>QR Code - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
@@ -19,6 +19,7 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
                         <a href="/profile" class="header-right">Profile</a>
@@ -29,13 +30,17 @@
                     <% if (params.verified == 1) { %>
                         <a href="/dashboard/check-in">Check-in</a>
                         <a href="/dashboard/alerts">View Alerts</a>
+                        <a href="/dashboard/check-in-history">View Check-in History</a>
                     <% } %>
-                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified == 2) { %>
                         <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official Portal</a>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
                     <% } %>
                 </header>
 

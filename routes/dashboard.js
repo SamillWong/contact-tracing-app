@@ -9,7 +9,6 @@ var axios = require('axios');
  */
 router.get('/', function (req, res) {
     return res.render('dashboard.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('dashboard.html', { root: 'views' });
 });
 
 /*
@@ -18,7 +17,6 @@ router.get('/', function (req, res) {
  */
 router.get('/check-in', function (req, res) {
     return res.render('check-in.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('check-in.html', { root: 'views' });
 });
 
 router.post('/check-in', function (req, res) {
@@ -114,7 +112,7 @@ router.get('/check-in/:code', function (req, res) {
  * Logged-in users should be able to see their check-in history on a map.
  */
 router.get('/check-in-history', function (req, res) {
-    return res.sendFile('history.html', { root: 'views' });
+    return res.render('history.ejs', { params: { verified: req.session.verified } });
 });
 
 /*
@@ -123,7 +121,6 @@ router.get('/check-in-history', function (req, res) {
  */
 router.get('/alerts', function (req, res) {
     return res.render('alerts.ejs', { params: { verified: req.session.verified } });
-    //return res.sendFile('alerts.html', { root: 'views' });
 });
 
 module.exports = router;

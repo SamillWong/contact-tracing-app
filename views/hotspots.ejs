@@ -6,6 +6,8 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="../javascripts/hotspot.js" defer></script>
     </head>
 
     <body>
@@ -16,6 +18,7 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
                         <a href="/profile" class="header-right">Profile</a>
@@ -26,13 +29,17 @@
                     <% if (params.verified == 1) { %>
                         <a href="/dashboard/check-in">Check-in</a>
                         <a href="/dashboard/alerts">View Alerts</a>
+                        <a href="/dashboard/check-in-history">View Check-in History</a>
                     <% } %>
-                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified == 2) { %>
                         <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official Portal</a>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
                     <% } %>
                 </header>
 
@@ -48,13 +55,31 @@
 
                 <div class="title-div">
                     <h2>View Hotspots</h2>
-                    <p>See current coronavirus hotspots on a map</p>
+                    <p>Click on the table below to see current coronavirus hotspots on a map</p>
                 </div>
 
-                <iframe width="1280" height="540" class="container-element"
-                style="border:0" allowfullscreen
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3273.055234868246!2d138.53396061523705!3d-34.879959280388825!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ab0c66da825e38b%3A0x99098c49f3d37456!2sWoodville%20Pizza%20Bar!5e0!3m2!1sen!2sau!4v1620894395499!5m2!1sen!2sau">
-                </iframe>
+                <div class="info-div center">
+                    <iframe class="container-element" width="1280" height="540" style="border:0" allowfullscreen
+                        v-bind:src="'https://www.google.com/maps/embed/v1/place?key=AIzaSyAOcZd8ly6lEkv9twl9XIIr3RQZtkaJS6E&language=en&q='+hotspot[currentHotspot].Address.replace(' ','+')+'+SA'">
+                    </iframe>
+                </div>
+
+                <div class="venue-table-div" style="margin-bottom:50px;">
+                    <table class="hotspot-table">
+                        <tr>
+                            <th>Hotspot ID</th>
+                            <th>Timestamp</th>
+                            <th>Venue Name</th>
+                            <th>Venue Address</th>
+                        </tr>
+                        <tr v-for="(entry,i) in hotspot" :key="i" @click.prevent="currentHotspot = i" class="clickable">
+                            <td>{{ entry.HotspotID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.Name }}</td>
+                            <td>{{ entry.Address }}</td>
+                        </tr>
+                    </table>
+                </div>
 
             </div>
 

@@ -108,6 +108,41 @@ router.get('/check-in', function (req, res, next) {
     });
 });
 
+/* Endpoint for getting hotspot entries */
+router.get('/hotspot', function (req, res, next) {
+
+    req.pool.getConnection(async function (err, connection) {
+        if (err) {
+            res.sendStatus(500);
+        }
+
+        // Query the database for hotspots and return a Promise object
+        getPromise = (query) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, function (err, rows, fields) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                });
+            });
+        }
+
+        // Construct rows from query
+        async function makeQuery() {
+            var checkInQuery = "SELECT Hotspot.HotspotID, Hotspot.Date, Venue.Name, Venue.Address, Venue.VenueID FROM Hotspot INNER JOIN Venue ON Hotspot.VenueID = Venue.VenueID ORDER BY Hotspot.HotspotID;";
+            try {
+                const promises = [getPromise(checkInQuery)];
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        var result = await makeQuery();
+        connection.release();
+
+        res.send(JSON.stringify(result[0]));
+    });
+});
+
 /* Endpoint for getting venue profile details */
 router.get('/venue', function (req, res, next) {
 
@@ -120,7 +155,7 @@ router.get('/venue', function (req, res, next) {
             res.sendStatus(500);
         }
 
-        // Query the database with provided email address and return a Promise object
+        // Query the database with provided ManagerID and return a Promise object
         getPromise = (query) => {
             return new Promise((resolve, reject) => {
                 connection.query(query, [req.session.managerid], function (err, rows, fields) {

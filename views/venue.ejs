@@ -19,6 +19,7 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
                         <a href="/profile" class="header-right">Profile</a>
@@ -29,13 +30,17 @@
                     <% if (params.verified == 1) { %>
                         <a href="/dashboard/check-in">Check-in</a>
                         <a href="/dashboard/alerts">View Alerts</a>
+                        <a href="/dashboard/check-in-history">View Check-in History</a>
                     <% } %>
-                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified == 2) { %>
                         <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official Portal</a>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
                     <% } %>
                 </header>
 
@@ -51,28 +56,40 @@
 
                 <div class="title-div">
                     <h2>Venue Management</h2>
+                    <button class="edit-button" type="button" onclick="edit()">
+                        <i class="fas fa-edit"> Edit</i>
+                    </button>
+                    <a href="/venue/qr-code">
+                        <button class="qr-button" type="button">
+                            <i class="fas fa-qrcode"> Get QR Code</i>
+                        </button>
+                    </a>
                     <p>View and edit information about your venue</p>
                 </div>
 
                 <div class="info-div">
-                    <p>
-                        <b>Venue Name: </b>{{ venue.Name }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
+                    <form class="login-form" method="POST" action='/venue/edit'>
+                        <p>
+                            <b>Venue Name: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.Name }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="name" name="name" :value="venue.Name"/>
+                        </p>
+                        <p>
+                            <b>Venue Address: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.Address }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="address" name="address" :value="venue.Address"/>
+                        </p>
+                        <p>
+                            <b>Venue Owner: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.FirstName }} {{ venue.LastName }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="fname" name="fname" :value="venue.FirstName"/>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="lname" name="lname" :value="venue.LastName"/>
+                        </p>
+
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="submit">
+                            <i class="fas fa-check"> Confirm</i>
                         </button>
-                    </p>
-                    <p>
-                        <b>Venue Address: </b>{{ venue.Address }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="button" onclick="edit()">
+                            <i class="fas fa-times"> Cancel</i>
                         </button>
-                    </p>
-                    <p>
-                        <b>Venue Owner: </b>{{ venue.FirstName }} {{ venue.LastName }}
-                        <button class="edit-button" type="button">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </p>
+                    </form>
                 </div>
 
                 <div class="venue-table-div">

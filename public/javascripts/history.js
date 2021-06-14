@@ -21,28 +21,20 @@ async function sendAJAX(url) {
     }
 }
 
-function edit(){
-    vueinst.editON=!vueinst.editON;
-}
-
-
 var vueinst = new Vue({
     el: '#content',
     data() {
         return {
-            venue: null,
+            currentCheckIn: 0,
             checkIn: [{
                 CheckInID: "No entries found",
                 Date: "",
                 Name: "",
                 Address: ""
-            }],
-            editON: true,
+            }]
         }
     },
     async mounted() {
-        var profile = await sendAJAX("/api/venue");
-        this.venue = profile[0];
         var checkIn = await sendAJAX("/api/check-in");
         if (checkIn != "[]") {
             for (entry in checkIn[0]) {

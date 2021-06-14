@@ -89,7 +89,7 @@ app.get('/profile*', function (req, res, next) {
     if (req.session.verified > 0) {
         next();
     } else {
-        return res.redirect('/login');
+        return res.redirect("/login?redirect="+encodeURIComponent(req.url));
     }
 });
 
@@ -97,7 +97,7 @@ app.get('/dashboard*', function (req, res, next) {
     if (req.session.verified == 1) {
         next();
     } else {
-        return res.redirect('/login');
+        return res.redirect("/login?redirect="+encodeURIComponent(req.url));
     }
 });
 
@@ -105,7 +105,47 @@ app.get('/venue*', function (req, res, next) {
     if (req.session.verified == 2) {
         next();
     } else {
-        return res.redirect('/login');
+        return res.redirect("/login?redirect="+encodeURIComponent(req.url));
+    }
+});
+
+app.get('/admin*', function (req, res, next) {
+    if (req.session.verified == 3) {
+        next();
+    } else {
+        return res.redirect("/login?redirect="+encodeURIComponent(req.url));
+    }
+});
+
+app.post('/profile*', function (req, res, next) {
+    if (req.session.verified > 0) {
+        next();
+    } else {
+        return res.sendStatus(401);
+    }
+});
+
+app.post('/dashboard*', function (req, res, next) {
+    if (req.session.verified == 1) {
+        next();
+    } else {
+        return res.sendStatus(401);
+    }
+});
+
+app.post('/venue*', function (req, res, next) {
+    if (req.session.verified == 2) {
+        next();
+    } else {
+        return res.sendStatus(401);
+    }
+});
+
+app.post('/admin*', function (req, res, next) {
+    if (req.session.verified == 3) {
+        next();
+    } else {
+        return res.sendStatus(401);
     }
 });
 

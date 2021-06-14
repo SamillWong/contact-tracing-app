@@ -1,6 +1,6 @@
 -- MySQL dump 10.16  Distrib 10.1.48-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: 
+-- Host: localhost    Database: CovidTrace
 -- ------------------------------------------------------
 -- Server version	10.1.48-MariaDB-0ubuntu0.18.04.1
 
@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `CheckIn`;
 CREATE TABLE `CheckIn` (
   `CheckInID` int(11) NOT NULL AUTO_INCREMENT,
   `VenueID` int(11) NOT NULL,
-  `Date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `Date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `UserID` int(11) NOT NULL,
   PRIMARY KEY (`CheckInID`),
   KEY `VenueID` (`VenueID`),
@@ -58,10 +58,7 @@ CREATE TABLE `HealthOfficial` (
   `LastName` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ContactNumber` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `CurrentHotspotID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`HealthOfficialID`),
-  KEY `CurrentHotspotID` (`CurrentHotspotID`),
-  CONSTRAINT `HealthOfficial_ibfk_1` FOREIGN KEY (`CurrentHotspotID`) REFERENCES `Hotspot` (`HotspotID`) ON DELETE SET NULL
+  PRIMARY KEY (`HealthOfficialID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -75,8 +72,7 @@ DROP TABLE IF EXISTS `Hotspot`;
 CREATE TABLE `Hotspot` (
   `HotspotID` int(11) NOT NULL AUTO_INCREMENT,
   `VenueID` int(11) NOT NULL,
-  `Density` int(11) NOT NULL,
-  `TimeFrame` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`HotspotID`),
   KEY `VenueID` (`VenueID`),
   CONSTRAINT `Hotspot_ibfk_1` FOREIGN KEY (`VenueID`) REFERENCES `Venue` (`VenueID`)
@@ -149,4 +145,4 @@ CREATE TABLE `VenueManager` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-06 23:14:44
+-- Dump completed on 2021-06-13  4:11:48
