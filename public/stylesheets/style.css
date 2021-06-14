@@ -179,6 +179,10 @@ body {
 
 /* STANDARD ELEMENTS */
 
+.hidden {
+    display: none !important;
+}
+
 .clickable {
     color: #000000;
     background-color: transparent;
@@ -208,6 +212,10 @@ body {
 .info-div {
     margin: 0px 16%;
     border-bottom: 1px solid #dddddd;
+}
+
+#content .edit{
+    display:none;
 }
 
 .edit-button {
@@ -575,9 +583,24 @@ body {
     display:none;
 }
 
+/* ADMIN SEARCH ELEMENTS */
+
 .admin-nav {
     text-decoration: none;
     line-height: 3em;
+}
+
+.search-switcher {
+    margin: 10px 0px;
+}
+
+.search-input .form-submit{
+    width:265px;
+    height:45px;
+}
+
+.search-input .form-input{
+    width:975px;
 }
 
 /* FOOTER */
@@ -609,29 +632,4 @@ body {
 
 .indented p {
     padding-left: 3em;
-}
-
-/* SEARCH */
-
-#Search .form-submit{
-    width:265px;
-    height:45px;
-}
-
-#Search .form-input{
-    width:975px;
-}
-
-#Search .UserSearchOFF{
-    display:none;
-}
-
-#Search .VenueSearchOFF{
-    display:none;
-}
-
-/* PROFILE EDITING */
-
-#content .edit{
-    display:none;
 }

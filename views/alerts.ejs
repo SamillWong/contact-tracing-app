@@ -7,6 +7,8 @@
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
         <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="../javascripts/alert.js" defer></script>
     </head>
 
     <body>
@@ -61,7 +63,7 @@
                     <p>See whether if you have been to a hotspot recently</p>
                 </div>
 
-                <div class="alert-div">
+                <div class="alert-div" v-bind:class="{ 'hidden' : !hasAlerts }">
                     <div class="alert-triangle-div">
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
@@ -75,14 +77,16 @@
                 <div class="venue-table-div">
                     <table class="venue-table">
                         <tr>
+                            <th>Hotspot ID</th>
                             <th>Timestamp</th>
                             <th>Venue Name</th>
                             <th>Venue Address</th>
                         </tr>
-                        <tr>
-                            <td>12 May 2021 14:03:29 GMT+09:30</td>
-                            <td><a href="#">Woodville Pizza Bar</a></td>
-                            <td>1/58 Woodville Rd, WOODVILLE SOUTH SA 5011</td>
+                        <tr v-for="(entry,i) in alert" :key="i">
+                            <td>{{ entry.HotspotID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.Name }}</td>
+                            <td>{{ entry.Address }}</td>
                         </tr>
                     </table>
                 </div>

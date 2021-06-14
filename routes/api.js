@@ -143,6 +143,45 @@ router.get('/hotspot', function (req, res, next) {
     });
 });
 
+/* Endpoint for getting user alert entries */
+router.get('/alert', function (req, res, next) {
+
+    if (req.session.verified != 1) {
+        return res.sendStatus(401);
+    }
+
+    req.pool.getConnection(async function (err, connection) {
+        if (err) {
+            res.sendStatus(500);
+        }
+
+        // Query the database for alerts and return a Promise object
+        getPromise = (query, param) => {
+            return new Promise((resolve, reject) => {
+                connection.query(query, param, function (err, rows, fields) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                });
+            });
+        }
+
+        // Construct rows from query
+        async function makeQuery() {
+            var alertQuery = "SELECT Hotspot.HotspotID, CheckIn.Date, Venue.Name, Venue.Address FROM CheckIn INNER JOIN Hotspot ON CheckIn.VenueID = Hotspot.VenueID INNER JOIN Venue ON CheckIn.VenueID = Venue.VenueID WHERE (((ABS(TIMESTAMPDIFF(DAY,Hotspot.Date,CheckIn.Date)) <= 14) OR (ABS(TIMESTAMPDIFF(SECOND,Hotspot.Date,CheckIn.Date)) <= 86400))) AND CheckIn.UserID = ?;";
+            try {
+                const promises = [getPromise(alertQuery, req.session.userid)];
+                return await Promise.all(promises);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        var result = await makeQuery();
+        connection.release();
+
+        res.send(JSON.stringify(result[0]));
+    });
+});
+
 /* Endpoint for getting venue profile details */
 router.get('/venue', function (req, res, next) {
 
