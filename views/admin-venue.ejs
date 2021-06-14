@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Manage Venue - COVIDTrace</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="/fontawesome/css/all.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="/javascripts/admin-venue.js" defer></script>
+    </head>
+
+    <body>
+
+        <div id="page-container">
+
+            <div id="content">
+
+                <header class="header">
+                    <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
+                    <% if (params.verified > 0) { %>
+                        <a href="/logout" class="header-right">Logout</a>
+                        <a href="/profile" class="header-right">Profile</a>
+                    <% } else { %>
+                        <a href="/register" class="header-right">Register</a>
+                        <a href="/login" class="header-right">Login</a>
+                    <% } %>
+                    <% if (params.verified == 1) { %>
+                        <a href="/dashboard/check-in">Check-in</a>
+                        <a href="/dashboard/alerts">View Alerts</a>
+                        <a href="/dashboard/check-in-history">View Check-in History</a>
+                    <% } %>
+                    <% if (params.verified == 2) { %>
+                        <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
+                    <% } %>
+                    <% if (params.verified == 3) { %>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
+                    <% } %>
+                </header>
+
+                <div class="breadcrumb-div">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>
+                            <a href="/admin">Health Official</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>Manage Venue</li>
+                    </ul>
+                </div>
+
+                <div class="title-div">
+                    <h2>Manage Venue</h2>
+                    <button class="edit-button" type="button" onclick="edit()">
+                        <i class="fas fa-edit"> Edit</i>
+                    </button>
+                    <p>View and edit information about the selected venue</p>
+                </div>
+
+                <div class="info-div">
+                    <form class="login-form" method="POST" v-bind:action="editURL+'/edit'">
+                        <p>
+                            <b>Venue Name: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.Name }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="name" name="name" :value="venue.Name"/>
+                        </p>
+                        <p>
+                            <b>Venue Address: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.Address }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="address" name="address" :value="venue.Address"/>
+                        </p>
+                        <p>
+                            <b>Venue Owner: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.FirstName }} {{ venue.LastName }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="fname" name="fname" :value="venue.FirstName"/>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="lname" name="lname" :value="venue.LastName"/>
+                        </p>
+
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="submit">
+                            <i class="fas fa-check"> Confirm</i>
+                        </button>
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="button" onclick="edit()">
+                            <i class="fas fa-times"> Cancel</i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="venue-table-div">
+                    <table class="venue-table">
+                        <tr>
+                            <th>Check-in ID</th>
+                            <th>Timestamp</th>
+                            <th>First name</th>
+                            <th>Last name</th>
+                        </tr>
+                        <tr v-for="(entry,i) in checkIn" :key="i">
+                            <td>{{ entry.CheckInID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.FirstName }}</td>
+                            <td>{{ entry.LastName }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+
+            <footer class="footer">
+                <div class="footer-div">
+                    <p class="footer-left"><b>COVIDTrace</b></p>
+                    <p class="footer-left">If you need information about COVID-19 or COVID-19 vaccines, please call 1800 020 080.</p>
+                    <p class="footer-left">
+                        <a href="#">Privacy Policy</a> &bull;
+                        <a href="#">Terms of Use</a> &bull;
+                        <a href="#">Copyright Information</a>
+                    </p>
+                </div>
+            </footer>
+
+        </div>
+
+    </body>
+
+
+</html>
