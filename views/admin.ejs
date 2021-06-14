@@ -113,7 +113,7 @@
                             <td>{{ entry.Date }}</td>
                             <td>{{ entry.Name }}</td>
                             <td>{{ entry.Address }}</td>
-                            <td><a v-bind:href="'/admin/hotspot/delete/'+entry.HotspotID" class="venue-button">Remove Hotspot</a></td>
+                            <td><a v-bind:href="'/admin/hotspot/delete/'+entry.HotspotID" v-bind:class="{ 'hidden' : !hasHotspots }" class="venue-button">Remove Hotspot</a></td>
                         </tr>
                     </table>
                 </div>

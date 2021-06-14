@@ -43,7 +43,7 @@ var vueinst = new Vue({
         var profile = await sendAJAX("/api/profile");
         this.user = profile[0];
         var checkIn = await sendAJAX("/api/check-in");
-        if (checkIn != "[]") {
+        if (checkIn[0].length > 0) {
             for (entry in checkIn[0]) {
                 const oldStamp = checkIn[0][entry].Date
                 checkIn[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
