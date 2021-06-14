@@ -10,7 +10,7 @@ var favicon = require('serve-favicon');
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
-var dashboardRouter = require('./routes/dashboard')
+var dashboardRouter = require('./routes/dashboard');
 var oauthRouter = require('./routes/oauth');
 var venueRouter = require('./routes/venue');
 var adminRouter = require('./routes/admin');
@@ -160,7 +160,8 @@ app.use('/oauth', oauthRouter);
 app.use('/venue', venueRouter);
 app.use('/admin', adminRouter);
 app.use('/api', apiRouter);
-app.use('/debug', debugRouter);
+// Debug routes disabled in production
+// app.use('/debug', debugRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
