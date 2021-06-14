@@ -17,6 +17,7 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
                         <a href="/profile" class="header-right">Profile</a>
@@ -27,13 +28,17 @@
                     <% if (params.verified == 1) { %>
                         <a href="/dashboard/check-in">Check-in</a>
                         <a href="/dashboard/alerts">View Alerts</a>
+                        <a href="/dashboard/check-in-history">View Check-in History</a>
                     <% } %>
-                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified == 2) { %>
                         <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official Portal</a>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
                     <% } %>
                 </header>
 
@@ -61,9 +66,9 @@
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
                     <p>
-                            You have been to a hotspot recently!<br />
-                            Per SA Health advice, a close contact or a casual contact of a confirmed COVID-19 case must stay in self-quarantine until the date provided to them by the Communicable Disease Control Branch at SA Health.<br />
-                            For more information, please visit <a href="https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid-19/about+covid-19/self-isolation+and+quarantine+advice+for+covid-19+%28coronavirus%29">this page</a> or call 1800 020 080.
+                        You have been to a hotspot recently!<br />
+                        Per SA Health advice, a close contact or a casual contact of a confirmed COVID-19 case must stay in self-quarantine until the date provided to them by the Communicable Disease Control Branch at SA Health.<br />
+                        For more information, please visit <a href="https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid-19/about+covid-19/self-isolation+and+quarantine+advice+for+covid-19+%28coronavirus%29">this page</a> or call 1800 020 080.
                     </p>
                 </div>
 

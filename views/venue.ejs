@@ -19,6 +19,7 @@
 
                 <header class="header">
                     <a href="/"><b>COVIDTrace</b></a>
+                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified > 0) { %>
                         <a href="/logout" class="header-right">Logout</a>
                         <a href="/profile" class="header-right">Profile</a>
@@ -29,13 +30,17 @@
                     <% if (params.verified == 1) { %>
                         <a href="/dashboard/check-in">Check-in</a>
                         <a href="/dashboard/alerts">View Alerts</a>
+                        <a href="/dashboard/check-in-history">View Check-in History</a>
                     <% } %>
-                    <a href="/hotspots">View Hotspots</a>
                     <% if (params.verified == 2) { %>
                         <a href="/venue">Manage Venue</a>
+                        <a href="/venue/qr-code">Get QR code</a>
                     <% } %>
                     <% if (params.verified == 3) { %>
-                        <a href="/admin" class="header-right">Health Official Portal</a>
+                        <a href="/admin">Health Official Portal</a>
+                        <a href="/admin/users">Manage Users</a>
+                        <a href="/admin/venues">Manage Venues</a>
+                        <a href="/admin/register">Register an official</a>
                     <% } %>
                 </header>
 
@@ -51,55 +56,57 @@
 
                 <div class="title-div">
                     <h2>Venue Management</h2>
+                    <button class="edit-button" type="button" onclick="edit()">
+                        <i class="fas fa-edit"> Edit</i>
+                    </button>
+                        <button onclick="location.href= '/venue/qr-code';" class="qr-button" type="button">
+                            <i class="fas fa-qrcode"> Get QR Code</i>
+                        </button>
                     <p>View and edit information about your venue</p>
                 </div>
 
-
-                <form method="POST" action='/venue/update'>
-
-                    <div class="info-div">
+                <div class="info-div">
+                    <form class="login-form" method="POST" action='/venue/edit'>
                         <p>
-                            <b>Venue Name: </b>{{ venue.Name }}
-                            <button class="edit-button" type="button" onclick="edit()">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <br>
-                            <input v-bind:class="{ 'edit' : editON}" type="text" id="name" name="name"  v-model="venue.Name"/>
+                            <b>Venue Name: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.Name }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="name" name="name" :value="venue.Name"/>
                         </p>
                         <p>
-                            <b>Venue Address: </b>{{ venue.Address }}
+                            <b>Venue Address: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.Address }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="address" name="address" :value="venue.Address"/>
                         </p>
                         <p>
-                            <b>Venue Owner: </b>{{ venue.FirstName }} {{ venue.LastName }}
-                            <button class="edit-button" type="button" onclick="edit()">
-                                <i class="fas fa-edit"></i>
-                            </button >
-                            <br>
-                            <input v-bind:class="{ 'edit' : editON}" type="text" id="fname" name="fname" v-model="venue.FirstName"/>
-                            <input v-bind:class="{ 'edit' : editON}" type="text" id="lname" name="lname" v-model="venue.LastName"/>
+                            <b>Venue Owner: </b><span v-bind:class="{ 'edit' : !editON }">{{ venue.FirstName }} {{ venue.LastName }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="fname" name="fname" :value="venue.FirstName"/>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="lname" name="lname" :value="venue.LastName"/>
                         </p>
 
-                        <button class="form-submit form-register" v-bind:class="{ 'edit' : editON}" type="submit" ><span>Update Details</span></button>
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="submit">
+                            <i class="fas fa-check"> Confirm</i>
+                        </button>
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="button" onclick="edit()">
+                            <i class="fas fa-times"> Cancel</i>
+                        </button>
+                    </form>
+                </div>
 
-                    </div>
+                <div class="venue-table-div">
+                    <table class="venue-table">
+                        <tr>
+                            <th>Check-in ID</th>
+                            <th>Timestamp</th>
+                            <th>First name</th>
+                            <th>Last name</th>
+                        </tr>
+                        <tr v-for="(entry,i) in checkIn" :key="i">
+                            <td>{{ entry.CheckInID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.FirstName }}</td>
+                            <td>{{ entry.LastName }}</td>
+                        </tr>
+                    </table>
+                </div>
 
-                    <div class="venue-table-div">
-                        <table class="venue-table">
-                            <tr>
-                                <th>Check-in ID</th>
-                                <th>Timestamp</th>
-                                <th>First name</th>
-                                <th>Last name</th>
-                            </tr>
-                            <tr v-for="(entry,i) in checkIn" :key="i">
-                                <td>{{ entry.CheckInID }}</td>
-                                <td>{{ entry.Date }}</td>
-                                <td>{{ entry.FirstName }}</td>
-                                <td>{{ entry.LastName }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </form>
             </div>
 
             <footer class="footer">

@@ -18,6 +18,7 @@
 
         <header class="header-index">
             <a href="/"><b>COVIDTrace</b></a>
+            <a href="/hotspots">View Hotspots</a>
             <% if (params.verified > 0) { %>
                 <a href="/logout" class="header-right">Logout</a>
                 <a href="/profile" class="header-right">Profile</a>
@@ -28,13 +29,17 @@
             <% if (params.verified == 1) { %>
                 <a href="/dashboard/check-in">Check-in</a>
                 <a href="/dashboard/alerts">View Alerts</a>
+                <a href="/dashboard/check-in-history">View Check-in History</a>
             <% } %>
-            <a href="/hotspots">View Hotspots</a>
             <% if (params.verified == 2) { %>
                 <a href="/venue">Manage Venue</a>
+                <a href="/venue/qr-code">Get QR code</a>
             <% } %>
             <% if (params.verified == 3) { %>
-                <a href="/admin" class="header-right">Health Official</a>
+                <a href="/admin">Health Official Portal</a>
+                <a href="/admin/users">Manage Users</a>
+                <a href="/admin/venues">Manage Venues</a>
+                <a href="/admin/register">Register an official</a>
             <% } %>
         </header>
 
@@ -64,12 +69,10 @@
                             <form class="login-form" method="POST" action='/register' >
 
                                 <div class="register-switcher">
-                                    <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="vuerego.venueregotf = true;">
+                                    <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="vuerego.venueregotf = true;"/>
                                         <label class="form-input-left register-label" for="userbutton">Personal Account</label>
-                                    </input>
-                                    <input class="register-radio" type="radio" id="managerbutton" name="type"value="manager" required onclick="vuerego.venueregotf = false;">
+                                    <input class="register-radio" type="radio" id="managerbutton" name="type" value="manager" required onclick="vuerego.venueregotf = false;"/>
                                         <label class="form-input-right register-label" for="managerbutton">Manager Account</label>
-                                    </input>
                                 </div>
 
                                 <div>
@@ -81,7 +84,7 @@
                                 </div>
 
                                 <div id="venueRego" v-bind:class="{ 'venueregister' : venueregotf}">
-                                    <input class="form-input" type="text" id="venuename" name="venuename" placeholder="Venue Name" /> <!--TODO: Make these two fields required when selected and not required when not --->
+                                    <input class="form-input" type="text" id="venuename" name="venuename" placeholder="Venue Name" />
                                     <input class="form-input" type="text" id="address" name="address" placeholder="Venue Address" />
                                     <input class="form-input" type="text" id="suburb" name="suburb" placeholder="Venue Suburb" />
                                 </div>

@@ -25,12 +25,10 @@
                     <form class="login-form" method="POST" action='/register' >
 
                         <div class="register-switcher">
-                            <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="vuerego.venueregotf = true;">
+                            <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="vuerego.venueregotf = true;"/>
                                 <label class="form-input-left register-label" for="userbutton">Personal Account</label>
-                            </input>
-                            <input class="register-radio" type="radio" id="managerbutton" name="type"value="manager" required onclick="vuerego.venueregotf = false;">
+                            <input class="register-radio" type="radio" id="managerbutton" name="type" value="manager" required onclick="vuerego.venueregotf = false;"/>
                                 <label class="form-input-right register-label" for="managerbutton">Manager Account</label>
-                            </input>
                         </div>
 
                         <div>
@@ -42,7 +40,7 @@
                         </div>
 
                         <div id="venueRego" v-bind:class="{ 'venueregister' : venueregotf}">
-                            <input class="form-input" type="text" id="venuename" name="venuename" placeholder="Venue Name" /> <!--TODO: Make these two fields required when selected and not required when not --->
+                            <input class="form-input" type="text" id="venuename" name="venuename" placeholder="Venue Name" />
                             <input class="form-input" type="text" id="address" name="address" placeholder="Venue Address" />
                             <input class="form-input" type="text" id="suburb" name="suburb" placeholder="Venue Suburb" />
                         </div>

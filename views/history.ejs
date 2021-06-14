@@ -2,10 +2,12 @@
 <html lang="en">
 
     <head>
-        <title>Check-in - COVIDTrace</title>
+        <title>View Check-in History - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="../javascripts/history.js" defer></script>
     </head>
 
     <body>
@@ -51,24 +53,36 @@
                             <a href="/dashboard">Dashboard</a>
                             <span class="breadcrumb-divider">/</span>
                         </li>
-                        <li>Check-in</li>
+                        <li>View Check-in History</li>
                     </ul>
                 </div>
 
                 <div class="title-div">
-                    <h2>Check-in</h2>
-                    <p>Enter the unique COVIDTrace code present at the venue below to check-in</p>
+                    <h2>View Check-in History</h2>
+                    <p>Click on the table below to see where you have checked in on a map</p>
                 </div>
 
-                <div class="container-element">
-                    <form class="login-form center" autocomplete="off" method="POST">
-                        <div>
-                            <input class="form-input" id="check-in-code" name="checkincode" type="text" maxlength="6">
-                        </div>
-                        <div>
-                            <button class="form-submit" type="submit" value="login"><span>Check-in</span></button>
-                        </div>
-                    </form>
+                <div class="info-div center">
+                    <iframe class="container-element" width="1280" height="540" style="border:0" allowfullscreen
+                        v-bind:src="'https://www.google.com/maps/embed/v1/place?key=AIzaSyAOcZd8ly6lEkv9twl9XIIr3RQZtkaJS6E&language=en&q='+checkIn[currentCheckIn].Address.replace(' ','+')+'+SA'">
+                    </iframe>
+                </div>
+
+                <div class="venue-table-div" style="margin-bottom:50px;">
+                    <table class="hotspot-table">
+                        <tr>
+                            <th>Check-in ID</th>
+                            <th>Timestamp</th>
+                            <th>Venue Name</th>
+                            <th>Venue Address</th>
+                        </tr>
+                        <tr v-for="(entry,i) in checkIn" :key="i" @click.prevent="currentCheckIn = i" class="clickable">
+                            <td>{{ entry.CheckInID }}</td>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.Name }}</td>
+                            <td>{{ entry.Address }}</td>
+                        </tr>
+                    </table>
                 </div>
 
             </div>

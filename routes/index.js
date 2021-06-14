@@ -77,7 +77,7 @@ router.post('/login', function (req, res, next) {
                             }
                             break;
                         case 2:
-                            req.session.healthofficalid = result[i][0].HealthOfficialID;
+                            req.session.healthofficialid = result[i][0].HealthOfficialID;
                             if (req.body.redirect) {
                                 res.redirect(req.body.redirect);
                             } else {
@@ -153,7 +153,7 @@ router.post('/register', function (req, res, next) {
     const newUser = {
         fname: req.body.fname,
         lname: req.body.lname,
-        email: req.body.email, // TODO: Make email case-insensitive
+        email: req.body.email,
         password: req.body.password,
         venuename: req.body.venuename,
         address: req.body.address,
@@ -277,7 +277,7 @@ router.get('/profile', function (req, res) {
     return res.render('profile.ejs', { params: { verified: req.session.verified } });
 });
 
-router.post('/profile', function (req, res) {
+router.post('/profile/edit', function (req, res) {
     const newDetails = {
         fname: req.body.fname,
         lname: req.body.lname,
@@ -286,7 +286,7 @@ router.post('/profile', function (req, res) {
         contact: req.body.contact,
     }
 
-    req.pool.getConnection(function (err, connection){
+    req.pool.getConnection(function (err, connection) {
 
         if (err) {
             console.log("Error at req.pool.getConnection\n" + err);
@@ -294,10 +294,22 @@ router.post('/profile', function (req, res) {
             return;
         }
 
-        var updateQuery = "UPDATE User SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE UserID = ?;";
+        switch (req.session.verified) {
+            case 1:
+                var updateQuery = "UPDATE User SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE UserID = ?;";
+                var accountid = req.session.userid;
+                break;
+            case 2:
+                var updateQuery = "UPDATE VenueManager SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE ManagerID = ?;";
+                var accountid = req.session.managerid;
+                break;
+            case 3:
+                var updateQuery = "UPDATE HealthOfficial SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE HealthOfficialID = ?;";
+                var accountid = req.session.healthofficialid;
+                break;
+        }
 
-
-        connection.query(updateQuery, [newDetails.fname, newDetails.lname, newDetails.email, newDetails.address, newDetails.contact, req.session.userid], function (err,rows){
+        connection.query(updateQuery, [newDetails.fname, newDetails.lname, newDetails.email, newDetails.address, newDetails.contact, accountid], function (err, rows) {
             if (err) {
                 console.log("Error at connection.query(insert)\n" + err);
                 res.sendStatus(500);
