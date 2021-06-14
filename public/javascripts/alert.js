@@ -25,25 +25,24 @@ var vueinst = new Vue({
     el: '#content',
     data() {
         return {
-            currentHotspot: 0,
-            hasHotspots: false,
-            hotspot: [{
-                HotspotID: "No hotspots found",
+            hasAlerts: false,
+            alert: [{
+                HotspotID: "No alerts found",
                 Date: "",
                 Name: "",
                 Address: ""
-            }],
+            }]
         }
     },
     async mounted() {
-        var hotspot = await sendAJAX("/api/hotspot");
-        if (hotspot[0].length > 0) {
-            for (entry in hotspot[0]) {
-                const oldStamp = hotspot[0][entry].Date
-                hotspot[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
+        var alert = await sendAJAX("/api/alert");
+        if (alert[0].length > 0) {
+            for (entry in alert[0]) {
+                const oldStamp = alert[0][entry].Date
+                alert[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
             }
-            this.hasHotspots = true;
-            this.hotspot = hotspot[0];
+            this.hasAlerts = true;
+            this.alert = alert[0];
         }
     }
 });

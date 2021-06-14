@@ -2,13 +2,17 @@
 <html lang="en">
 
     <head>
-        <title>Health Official - Search - COVIDTrace</title>
+        <title>Search - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
         <link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
         <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
-        <script src="/../javascripts/search.js" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <% if (params.search == "users") { %>
+            <script src="../javascripts/search-user.js" defer></script>
+        <% } else { %>
+            <script src="../javascripts/search-venue.js" defer></script>
+        <% } %>
     </head>
 
     <body>
@@ -59,43 +63,98 @@
                 </div>
 
                 <div class="title-div">
-                    <h2>Health Official</h2>
+                    <h2>Search</h2>
                     <p>Search for Users and Venues</p>
                 </div>
 
                 <div class="info-div">
-                    <div class="register-switcher" style="display:inline-block">
-                        <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required checked="checked" onclick="UserVis()">
-                            <label class="form-input-left register-label" for="userbutton">User Search</label>
-                        </input>
-                        <input class="register-radio" type="radio" id="managerbutton" name="type"value="manager" required onclick="VenueVis()">
-                            <label class="form-input-right register-label" for="managerbutton">Venue Search</label>
-                        </input>
+                    <div class="register-switcher search-switcher">
+                        <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required
+                            <% if (params.search == "users") { %> checked="checked" <% } %> onclick="location.href='/admin/users';" />
+                        <label class="form-input-left register-label" for="userbutton">User Search</label>
+                        <input class="register-radio" type="radio" id="managerbutton" name="type" value="manager" required
+                            <% if (params.search == "venues") { %> checked="checked" <% } %> onclick="location.href='/admin/venues';" />
+                        <label class="form-input-right register-label" for="managerbutton">Venue Search</label>
                     </div>
                 </div>
 
-                <div id="Search">
-                    <div v-bind:class="{ 'UserSearchOFF' : UserSearch}">
+                <div class="search-input">
+                    <% if (params.search == "users") { %>
                         <div class="info-div" >
                             <div id="usersearch">
-                                <form class="login-form" autocomplete="off" method="POST" action='/admin/users' >
-                                        <p>User Search</p>
-                                        <input class = "form-input" type="email" id="useremail" name="email" placeholder = "Enter User Email">
-                                        <button class="form-submit"  type="submit" value="login"><span>Search</span></button>
-                                </form>
+                                <p>User Search</p>
+                                <input v-model="query" class="form-input" type="text" id="userquery" name="query" minlength="3">
                             </div>
                         </div>
-                    </div>
+                    <% } %>
 
-                    <div v-bind:class="{ 'VenueSearchOFF' : VenueSearch}">
+                    <% if (params.search == "venues") { %>
                         <div class="info-div">
                             <div id="venuesearch">
-                                <form class="login-form" autocomplete="off" method="POST" action='/admin/venues' >
-                                        <p>Venue Search</p>
-                                        <input class = "form-input" type="email" id="venueemail" name="email" placeholder = "Enter Venue Email">
-                                        <button class="form-submit" type="submit" value="login"><span>Search</span></button>
-                                </form>
+                                <p>Venue Search</p>
+                                <input v-model="query" class="form-input" type="text" id="venuequery" name="query" minlength="3">
                             </div>
                         </div>
-                    </div>
+                    <% } %>
                 </div>
+
+                <% if (params.search == "users") { %>
+                    <div class="venue-table-div" style="margin-bottom:50px;">
+                        <table class="venue-table">
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th colspan="2">Contact Number</th>
+                            </tr>
+                            <tr v-for="(entry,i) in user" :key="i">
+                                <td>{{ entry.UserID }}</td>
+                                <td>{{ entry.FirstName }} {{ entry.LastName }}</td>
+                                <td>{{ entry.Address }}</td>
+                                <td>{{ entry.ContactNumber }}</td>
+                                <td><a v-bind:href="'/admin/users/profile/'+entry.UserID" v-bind:class="{ 'hidden' : !hasUsers }" class="venue-button">Manage Profile</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                <% } %>
+
+                <% if (params.search == "venues") { %>
+                    <div class="venue-table-div" style="margin-bottom:50px;">
+                        <table class="venue-table">
+                            <tr>
+                                <th>Venue ID</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th colspan="2">Contact Number</th>
+                            </tr>
+                            <tr v-for="(entry,i) in venue" :key="i">
+                                <td>{{ entry.VenueID }}</td>
+                                <td>{{ entry.Name }}</td>
+                                <td>{{ entry.Address }}</td>
+                                <td>{{ entry.ContactNumber }}</td>
+                                <td><a v-bind:href="'/admin/venues/profile/'+entry.VenueID" v-bind:class="{ 'hidden' : !hasVenues }" class="venue-button">Manage Venue</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                <% } %>
+
+            </div>
+
+            <footer class="footer">
+                <div class="footer-div">
+                    <p class="footer-left"><b>COVIDTrace</b></p>
+                    <p class="footer-left">If you need information about COVID-19 or COVID-19 vaccines, please call 1800 020 080.</p>
+                    <p class="footer-left">
+                        <a href="#">Privacy Policy</a> &bull;
+                        <a href="#">Terms of Use</a> &bull;
+                        <a href="#">Copyright Information</a>
+                    </p>
+                </div>
+            </footer>
+
+        </div>
+
+    </body>
+
+
+</html>

@@ -60,11 +60,9 @@
                         <i class="fas fa-edit"> Edit</i>
                     </button>
                     <% if (params.verified == 1) { %>
-                        <a href="/dashboard/check-in-history">
-                            <button class="qr-button" type="button">
-                                <i class="fas fa-history"> Check-in History</i>
-                            </button>
-                        </a>
+                        <button onclick="location.href='/dashboard/check-in-history';" class="qr-button" type="button">
+                            <i class="fas fa-history"> Check-in History</i>
+                        </button>
                     <% } %>
                     <p>
                         View and edit information about your COVIDTrace account

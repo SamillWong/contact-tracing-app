@@ -21,29 +21,36 @@ async function sendAJAX(url) {
     }
 }
 
+function edit(){
+    vueinst.editON=!vueinst.editON;
+}
+
 var vueinst = new Vue({
     el: '#content',
     data() {
         return {
-            currentHotspot: 0,
-            hasHotspots: false,
-            hotspot: [{
-                HotspotID: "No hotspots found",
+            editURL: null,
+            user: null,
+            checkIn: [{
+                CheckInID: "No entries found",
                 Date: "",
                 Name: "",
                 Address: ""
             }],
+            editON: true,
         }
     },
     async mounted() {
-        var hotspot = await sendAJAX("/api/hotspot");
-        if (hotspot[0].length > 0) {
-            for (entry in hotspot[0]) {
-                const oldStamp = hotspot[0][entry].Date
-                hotspot[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
+        this.editURL = "/admin/users/profile/"+window.location.pathname.split("/").pop();
+        var profile = await sendAJAX("/api/profile/1/"+window.location.pathname.split("/").pop());
+        this.user = profile[0];
+        var checkIn = await sendAJAX("/api/check-in/1/"+window.location.pathname.split("/").pop());
+        if (checkIn[0].length > 0) {
+            for (entry in checkIn[0]) {
+                const oldStamp = checkIn[0][entry].Date
+                checkIn[0][entry].Date = new Date(oldStamp).toLocaleDateString()+" "+new Date(oldStamp).toLocaleTimeString();
             }
-            this.hasHotspots = true;
-            this.hotspot = hotspot[0];
+            this.checkIn = checkIn[0];
         }
     }
 });

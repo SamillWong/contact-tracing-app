@@ -88,11 +88,11 @@ router.post('/login', function (req, res, next) {
                             res.redirect('/login')
                     }
                 } else {
-                    res.redirect("/login");
+                    res.redirect(req.body.redirect);
                 }
                 break;
             } else if (i == 2) {
-                res.redirect("/login");
+                res.redirect(req.body.redirect);
             }
         }
     });

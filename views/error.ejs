@@ -59,11 +59,11 @@
                     <h2><%= error.status %></h2>
                 </div>
 
-                <% //if (params.verified == 3) { %>
+                <% if (params.verified == 3) { %>
                     <div class="info-div">
                         <pre><%= error.stack %></pre>
                     </div>
-                <% //} %>
+                <% } %>
             </div>
 
             <footer class="footer">
@@ -82,16 +82,4 @@
 
     </body>
 
-
-</html>
-
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <title>Error</title>
-    <link rel="stylesheet" href="/stylesheets/style.css">
-  </head>
-  <body>
-
-  </body>
 </html>

@@ -2,12 +2,13 @@
 <html lang="en">
 
     <head>
-        <title>View Hotspots - COVIDTrace</title>
+        <title>Manage Profile - COVIDTrace</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
-        <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="/fontawesome/css/all.css">
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-        <script src="../javascripts/hotspot.js" defer></script>
+        <script src="/javascripts/admin-profile.js" defer></script>
     </head>
 
     <body>
@@ -49,31 +50,61 @@
                             <a href="/">Home</a>
                             <span class="breadcrumb-divider">/</span>
                         </li>
-                        <li>View Hotspots</li>
+                        <li>
+                            <a href="/admin">Health Official</a>
+                            <span class="breadcrumb-divider">/</span>
+                        </li>
+                        <li>Manage Profile</li>
                     </ul>
                 </div>
 
                 <div class="title-div">
-                    <h2>View Hotspots</h2>
-                    <p>Click on the table below to see current coronavirus hotspots on a map</p>
+                    <h2>Manage Profile</h2>
+                    <button class="edit-button" type="button" onclick="edit()">
+                        <i class="fas fa-edit"> Edit</i>
+                    </button>
+                    <p>View and edit information about the selected user</p>
                 </div>
 
-                <div class="info-div center">
-                    <iframe class="container-element" width="1280" height="540" style="border:0" allowfullscreen
-                        v-bind:src="'https://www.google.com/maps/embed/v1/place?key=AIzaSyAOcZd8ly6lEkv9twl9XIIr3RQZtkaJS6E&language=en&q='+hotspot[currentHotspot].Address.replace(' ','+')+'+SA'">
-                    </iframe>
+                <div class="info-div">
+                    <form class="login-form" method="POST" v-bind:action="editURL+'/edit'">
+                        <p>
+                            <b>Name: </b><span v-bind:class="{ 'edit' : !editON }">{{ user.FirstName }} {{ user.LastName }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="fname" name="fname" :value="user.FirstName" />
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="lname" name="lname" :value="user.LastName" />
+                        </p>
+                        <p>
+                            <b>Email: </b><span v-bind:class="{ 'edit' : !editON }">{{ user.Email }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="email" id="email" name="email" :value="user.Email"/>
+                        </p>
+                        <p>
+                            <b>Address: </b><span v-bind:class="{ 'edit' : !editON }">{{ user.Address }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="address" name="address" :value="user.Address"/>
+                        </p>
+                        <p>
+                            <b>Contact number: </b><span v-bind:class="{ 'edit' : !editON }">{{ user.ContactNumber }}</span>
+                            <input v-bind:class="{ 'edit' : editON }" type="text" id="contact" name="contact" :value="user.ContactNumber"/>
+                        </p>
+
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="submit">
+                            <i class="fas fa-check"> Confirm</i>
+                        </button>
+                        <button class="confirm-button" v-bind:class="{ 'edit' : editON }" type="button" onclick="edit()">
+                            <i class="fas fa-times"> Cancel</i>
+                        </button>
+                    </form>
                 </div>
 
-                <div class="venue-table-div" style="margin-bottom:50px;">
-                    <table class="hotspot-table">
+                <div class="venue-table-div">
+                    <table class="venue-table">
                         <tr>
-                            <th>Hotspot ID</th>
+                            <th>Check-in ID</th>
                             <th>Timestamp</th>
                             <th>Venue Name</th>
                             <th>Venue Address</th>
                         </tr>
-                        <tr v-for="(entry,i) in hotspot" :key="i" @click.prevent="currentHotspot = i" class="clickable">
-                            <td>{{ entry.HotspotID }}</td>
+                        <tr v-for="(entry,i) in checkIn" :key="i">
+                            <td>{{ entry.CheckInID }}</td>
                             <td>{{ entry.Date }}</td>
                             <td>{{ entry.Name }}</td>
                             <td>{{ entry.Address }}</td>
