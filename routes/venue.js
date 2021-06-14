@@ -53,7 +53,6 @@ router.get('/qr-code', async function (req, res) {
     };
     var url = process.env.BASEURL+"/dashboard/check-in/"+req.session.managerid;
     var data = await qrcode.toDataURL(url, options);
-    console.log(url);
 
     return res.render('qr-code.ejs', {
         params: {
