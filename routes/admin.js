@@ -173,41 +173,82 @@ router.get('/hotspot/delete/:id', function (req, res) {
  * Admins should be able to manage users.
  */
 router.get('/users', function (req, res) {
-    return res.render('search.ejs', { params: { verified: req.session.verified } });
+
+    if (req.query.name && req.query.name.length > 2) {
+
+        req.pool.getConnection(async function (err, connection) {
+            if (err) {
+                res.sendStatus(500);
+            }
+
+            // Query the database with account ID and return a Promise object
+            getPromise = (query, param) => {
+                return new Promise((resolve, reject) => {
+                    connection.query(query, param, function (err, rows, fields) {
+                        if (err) return reject(err);
+                        return resolve(rows);
+                    });
+                });
+            }
+
+            // Construct rows from each query
+            async function makeQuery() {
+                var profileQuery = "SELECT UserID, Email, FirstName, LastName, Address, ContactNumber FROM User WHERE (FirstName LIKE ? OR LastName LIKE ?);";
+                try {
+                    const promises = [getPromise(profileQuery, ['%'+req.query.name+'%', '%'+req.query.name+'%'])];
+                    return await Promise.all(promises);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+            var result = await makeQuery();
+            connection.release();
+
+            res.send(JSON.stringify(result[0]));
+        });
+
+    } else {
+        return res.render('search.ejs', { params: { verified: req.session.verified, search: "users" } });
+    }
 });
 
-router.post('/users', function (req, res) {
+/*
+ * GET/POST profile page
+ * Admins should be able to view and edit any user's information.
+ */
+router.get('/users/profile/:id', function (req, res) {
+    return res.render('admin-profile.ejs', { params: { verified: req.session.verified } });
+});
 
-    req.pool.getConnection(async function (err, connection) {
+router.post('/users/profile/:id/edit', function (req, res) {
+    const newDetails = {
+        fname: req.body.fname,
+        lname: req.body.lname,
+        email: req.body.email,
+        address: req.body.address,
+        contact: req.body.contact,
+    }
+
+    req.pool.getConnection(function (err, connection) {
+
         if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
             res.sendStatus(500);
+            return;
         }
 
-        // Query the database with account ID and return a Promise object
-        getPromise = (query, param) => {
-            return new Promise((resolve, reject) => {
-                connection.query(query, param, function (err, rows, fields) {
-                    if (err) return reject(err);
-                    return resolve(rows);
-                });
-            });
-        }
+        var updateQuery = "UPDATE User SET FirstName = ?, LastName = ?, Email = ?, Address = ?, ContactNumber = ? WHERE UserID = ?;";
 
-        // Construct rows from each query
-        async function makeQuery() {
-            var profileQuery = "SELECT UserID, Email, FirstName, LastName, Address, ContactNumber FROM User WHERE Email = ?;";
-            try {
-                const promises = [getPromise(profileQuery, [req.body.email])];
-                return await Promise.all(promises);
-            } catch (err) {
-                console.log(err);
+        connection.query(updateQuery, [newDetails.fname, newDetails.lname, newDetails.email, newDetails.address, newDetails.contact, req.params.id], function (err, rows) {
+            if (err) {
+                console.log("Error at connection.query(insert)\n" + err);
+                res.sendStatus(500);
+                return;
             }
-        }
-        var result = await makeQuery();
-        connection.release();
+        })
+    })
+    res.redirect('/admin/users/profile/'+req.params.id);
 
-        res.send(JSON.stringify(result[0][0]));
-    });
 });
 
 /*
@@ -215,41 +256,81 @@ router.post('/users', function (req, res) {
  * Admins should be able to manage venues.
  */
 router.get('/venues', function (req, res) {
-    return res.render('search.ejs', { params: { verified: req.session.verified } });
+
+    if (req.query.name && req.query.name.length > 2) {
+
+        req.pool.getConnection(async function (err, connection) {
+            if (err) {
+                res.sendStatus(500);
+            }
+
+            // Query the database with Email and return a Promise object
+            getPromise = (query, param) => {
+                return new Promise((resolve, reject) => {
+                    connection.query(query, param, function (err, rows, fields) {
+                        if (err) return reject(err);
+                        return resolve(rows);
+                    });
+                });
+            }
+
+            // Construct rows from each query
+            async function makeQuery() {
+                var profileQuery = "SELECT VenueID, Name, Address, ContactNumber FROM Venue WHERE Name LIKE ?;";
+                try {
+                    const promises = [getPromise(profileQuery, ['%'+req.query.name+'%'])];
+                    return await Promise.all(promises);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+            var result = await makeQuery();
+            connection.release();
+
+            res.send(JSON.stringify(result[0]));
+        });
+
+    } else {
+        return res.render('search.ejs', { params: { verified: req.session.verified, search: "venues" } });
+    }
+
 });
 
-router.post('/venues', function (req, res) {
+/*
+ * GET/POST venue page
+ * Admins should be able to view and edit any venue information.
+ */
+router.get('/venues/profile/:id', function (req, res) {
+    return res.render('admin-venue.ejs', { params: { verified: req.session.verified } });
+});
 
-    req.pool.getConnection(async function (err, connection) {
+router.post('/venues/profile/:id/edit', function (req, res) {
+    const newDetails = {
+        fname: req.body.fname,
+        lname: req.body.lname,
+        venuename: req.body.name,
+        venueaddress: req.body.address
+    }
+
+    req.pool.getConnection(function (err, connection) {
+
         if (err) {
+            console.log("Error at req.pool.getConnection\n" + err);
             res.sendStatus(500);
+            return;
         }
 
-        // Query the database with Email and return a Promise object
-        getPromise = (query, param) => {
-            return new Promise((resolve, reject) => {
-                connection.query(query, param, function (err, rows, fields) {
-                    if (err) return reject(err);
-                    return resolve(rows);
-                });
-            });
-        }
+        var updateQuery = "UPDATE Venue INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID SET Venue.Name = ?, Venue.Address = ?, VenueManager.FirstName = ?, VenueManager.LastName = ? WHERE VenueID = ?;";
 
-        // Construct rows from each query
-        async function makeQuery() {
-            var profileQuery = "SELECT VenueID, Name, Venue.Address, Longitude, Latitude, Venue.ContactNumber, ManagerID, Email, FirstName, LastName FROM Venue INNER JOIN VenueManager ON Venue.VenueID = VenueManager.ManagerID WHERE Email = ?;";
-            try {
-                const promises = [getPromise(profileQuery, [req.body.email])];
-                return await Promise.all(promises);
-            } catch (err) {
-                console.log(err);
+        connection.query(updateQuery, [newDetails.venuename, newDetails.venueaddress, newDetails.fname, newDetails.lname, req.params.id], function (err, rows) {
+            if (err) {
+                console.log("Error at connection.query(insert)\n" + err);
+                res.sendStatus(500);
+                return;
             }
-        }
-        var result = await makeQuery();
-        connection.release();
-
-        res.send(JSON.stringify(result[0][0]));
-    });
+        })
+    })
+    res.redirect('/admin/venues/profile/'+req.params.id);
 
 });
 
