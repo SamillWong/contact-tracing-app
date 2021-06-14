@@ -70,13 +70,11 @@
                 <div class="info-div">
                     <div class="register-switcher search-switcher">
                         <input class="register-radio" type="radio" id="userbutton" name="type" value="user" required
-                            <% if (params.search == "users") { %> checked="checked" <% } %> onclick="location.href='/admin/users';">
-                            <label class="form-input-left register-label" for="userbutton">User Search</label>
-                        </input>
+                            <% if (params.search == "users") { %> checked="checked" <% } %> onclick="location.href='/admin/users';" />
+                        <label class="form-input-left register-label" for="userbutton">User Search</label>
                         <input class="register-radio" type="radio" id="managerbutton" name="type" value="manager" required
-                            <% if (params.search == "venues") { %> checked="checked" <% } %> onclick="location.href='/admin/venues';">
-                            <label class="form-input-right register-label" for="managerbutton">Venue Search</label>
-                        </input>
+                            <% if (params.search == "venues") { %> checked="checked" <% } %> onclick="location.href='/admin/venues';" />
+                        <label class="form-input-right register-label" for="managerbutton">Venue Search</label>
                     </div>
                 </div>
 
